@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function showHome()
+    public function showDashboard()
     {
-        return view("dashboard.home");
+        return view("dashboard.master");
     }
 
     /**

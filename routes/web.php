@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +18,7 @@ Route::middleware("guest")->group(function(){
     });
     
 Route::middleware("auth")->group(function(){
-    Route::get("/home",[HomeController::class,"showHome"])->name("home");
+    Route::get("/dashboard",[DashboardController::class,"showDashboard"])->name("dashboard");
     Route::post("/logout",[LoginController::class,"logout"])->name("logout");    
 });
 // Route::get("/register",[RegisterController::class,"showRegister"])->name("register");
