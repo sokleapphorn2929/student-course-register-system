@@ -1,66 +1,3 @@
-{{-- <form method="post" action="{{ route("logout") }}">
-    @csrf
-    @auth
-    <p>Welcome, {{ Auth::user()->username }}!</p>
-    <button type="submit">Logout</button>
-    @endauth
-    @guest
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
-    @endguest
-<form/> --}}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student-Course Register System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-</head>
-<body class="bg-light">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-mortarboard-fill me-2"></i>SCR System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#">Students</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Courses</a></li>
-                <li class="nav-item me-3"><a class="nav-link" href="#">Enrollment</a></li>
-
-                @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
-                                {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
-                            </div>
-                            <span class="fw-bold text-light">{{ strtoupper(Auth::user()->username) }}</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="profileDropdown">
-                            <li><h6 class="dropdown-header">User Settings</h6></li>
-                            <li><a class="dropdown-item" href=""><i class="bi bi-person me-2"></i> My Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                @endauth
-            </ul>
-            </div>
-        </div>
-    </nav>
 
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -201,7 +138,3 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
