@@ -13,5 +13,7 @@ class Users extends Authenticatable
         "email",
         "password",
         "profile_pic",
+        "gender",
+        "dob",
     ];
 }

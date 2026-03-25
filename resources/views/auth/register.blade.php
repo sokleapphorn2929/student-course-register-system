@@ -141,7 +141,7 @@
                 
                 <div class="text-center mt-4">
                     <span class="text-secondary">Already have an account? </span>
-                    <a href="{{ route("login") }}" class="text-primary fw-medium text-decoration-none">Sign in</a>
+                    <a href="{{ route("login") }}" class="text-primary fw-medium text-decoration-none">Login</a>
                 </div>
                 
             </div>
