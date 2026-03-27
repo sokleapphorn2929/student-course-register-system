@@ -10,7 +10,7 @@ class AccountDataController extends Controller
 {
     public function showAccount()
     {
-        return view('dashboard.layout.account'); // Make sure this matches your blade file name
+        return view('dashboard.account'); // Make sure this matches your blade file name
     }
 
     // Update username
