@@ -11,7 +11,6 @@
 <body class="bg-light">
     @include("dashboard.layout.header")
 
-    {{-- @include("dashboard.layout.master") --}}
-    @include("dashboard.layout.account")
+    @include("dashboard.layout.master")
 
     @include("dashboard.layout.footer")

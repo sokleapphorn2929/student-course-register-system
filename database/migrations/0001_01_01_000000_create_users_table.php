@@ -29,14 +29,6 @@ return new class extends Migration
             $collection->timestamp('created_at')->nullable();
         });
 
-        Schema::create('sessions', function (Blueprint $collection) {
-            $collection->string('id')->primary();
-            $collection->foreignId('user_id')->nullable()->index();
-            $collection->string('ip_address', 45)->nullable();
-            $collection->text('user_agent')->nullable();
-            $collection->longText('payload');
-            $collection->integer('last_activity')->index();
-        });
     }
 
     /**

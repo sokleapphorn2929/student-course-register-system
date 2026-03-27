@@ -1,5 +1,5 @@
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm position-fixed w-100 z-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#"><i class="bi bi-mortarboard-fill me-2"></i>SCR System</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -7,7 +7,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#">Students</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route("dashboard") }}">Students</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Courses</a></li>
                 <li class="nav-item me-3"><a class="nav-link" href="#">Enrollment</a></li>
 
@@ -37,7 +37,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="profileDropdown">
                             <li><h6 class="dropdown-header">User Settings</h6></li>
-                            <li><a class="dropdown-item" href=""><i class="bi bi-person me-2"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route("account") }}"><i class="bi bi-person me-2"></i> My Profile</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>

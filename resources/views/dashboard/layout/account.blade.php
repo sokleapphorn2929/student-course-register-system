@@ -1,3 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Student-Course Register System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+@include("dashboard.layout.header")
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
@@ -51,7 +64,7 @@
                                         <i class="bi bi-person me-1"></i> Username
                                     </label>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-medium">{{ Auth::user()->username }}</span>
+                                        <span id="txtUsername" class="fw-medium">{{ Auth::user()->username }}</span>
                                         <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#usernamemodal">
                                             <i class="bi bi-pencil"></i> Edit
                                         </button>
@@ -66,12 +79,12 @@
                                                     <div class="modal-body">
                                                         <div class="input-group">
                                                             <span class="input-group-text" id="visible-addon">@</span>
-                                                            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="visible-addon">
+                                                            <input id="inpUsername" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="visible-addon">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Update</button>
+                                                        <button onclick="SaveUsername()" id="btnUsername" type="button" class="btn btn-primary">Update</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -89,7 +102,7 @@
                                         @if (Auth::user()->gender)                                            
                                         <span class="fw-medium">{{ Auth::user()->gender }}</span>
                                         @else
-                                        <span class="fw-medium text-danger">No data</span>
+                                        <span id="txtGender" class="fw-medium text-danger">No data</span>
                                         @endif
                                         <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#gendermodal">
                                             <i class="bi bi-pencil"></i> Edit
@@ -103,15 +116,15 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <select class="form-select" aria-label="Default select example">
+                                                        <select id="genderchoose" class="form-select" aria-label="Default select example">
                                                             <option selected>Select Gender</option>
-                                                            <option value="Male">Male</option>
-                                                            <option value="Female">Female</option>
+                                                            <option id="vMale" value="Male">Male</option>
+                                                            <option id="vFemale" value="Female">Female</option>
                                                         </select>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Update</button>
+                                                        <button onclick="SaveGender()" id="btnGender" type="button" class="btn btn-primary">Update</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -127,9 +140,9 @@
                                     </label>
                                     <div class="d-flex justify-content-between align-items-center">
                                         @if (Auth::user()->dob)
-                                        <span class="fw-medium">{{ Auth::user()->dob }}</span>
+                                        <span id="txtDob" class="fw-medium">{{ Auth::user()->dob }}</span>
                                         @else
-                                        <span class="fw-medium text-danger">No data</span>
+                                        <span id="txtDob" class="fw-medium text-danger">No data</span>
                                         @endif
                                         <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#dobmodal">
                                             <i class="bi bi-pencil"></i> Edit
@@ -144,13 +157,13 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="mb-3">
-                                                            <label for="example-date-input" class="form-label">Enter Date:</label>
-                                                            <input class="form-control" type="date" id="example-date-input">
+                                                            <label for="dobInput" class="form-label">Enter Date:</label>
+                                                            <input class="form-control" type="date" id="dobInput">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Update</button>
+                                                        <button onclick="SaveDob()" type="button" class="btn btn-primary">Update</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -291,13 +304,11 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             showStatus('Profile picture updated successfully!', 'success');
-            // Reload after 2 seconds to show updated picture
             setTimeout(() => {
                 location.reload();
             }, 2000);
         } else {
             showStatus(data.message || 'Failed to update profile picture.', 'danger');
-            // Reset the file input and reload
             document.getElementById('profilePictureUpload').value = '';
             selectedFile = null;
             saveBtn.disabled = false;
@@ -319,21 +330,199 @@ function showStatus(message, type) {
         statusDiv.id = 'uploadStatus';
         statusDiv.className = 'text-center mt-2';
         const profileSection = document.querySelector('.text-center.mb-4');
-        profileSection.parentNode.insertBefore(statusDiv, profileSection.nextSibling);
+        if (profileSection) {
+            profileSection.parentNode.insertBefore(statusDiv, profileSection.nextSibling);
+        }
     }
     
-    statusDiv.style.display = 'block';
-    const alertClass = type === 'danger' ? 'alert-danger' : 
-                    (type === 'success' ? 'alert-success' : 'alert-info');
-    statusDiv.innerHTML = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                            ${message}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                          </div>`;
-    
-    setTimeout(() => {
-        if (statusDiv) {
-            statusDiv.style.display = 'none';
-        }
-    }, 3000);
+    if (statusDiv) {
+        statusDiv.style.display = 'block';
+        const alertClass = type === 'danger' ? 'alert-danger' : 
+                        (type === 'success' ? 'alert-success' : 'alert-info');
+        statusDiv.innerHTML = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                                ${message}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>`;
+        
+        setTimeout(() => {
+            if (statusDiv) {
+                statusDiv.style.display = 'none';
+            }
+        }, 3000);
+    }
 }
+
+// Username function with AJAX
+function SaveUsername() {
+    let username = document.getElementById("inpUsername").value;
+    
+    if (!username || username.trim() === "") {
+        alert("Please enter a username");
+        return;
+    }
+    
+    // Show loading state
+    let btn = document.getElementById("btnUsername");
+    let originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+    
+    fetch('/update-username', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ username: username })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update display
+            document.getElementById("txtUsername").innerHTML = data.username;
+            document.getElementById("inpUsername").value = "";
+            
+            // Close modal
+            let modal = bootstrap.Modal.getInstance(document.getElementById('usernamemodal'));
+            modal.hide();
+            
+            // Show success message
+            showStatus('Username updated successfully!', 'success');
+        } else {
+            alert(data.message || 'Failed to update username');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating username');
+    })
+    .finally(() => {
+        // Reset button
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+}
+
+// Gender function with AJAX
+function SaveGender() {
+    let gender = document.getElementById("genderchoose").value;
+    
+    if (gender && gender !== "Select Gender") {
+        // Show loading state
+        let btn = document.getElementById("btnGender");
+        let originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        
+        fetch('/update-gender', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ gender: gender })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update display
+                document.getElementById("txtGender").innerHTML = data.gender;
+                document.getElementById("genderchoose").value = "Select Gender";
+                
+                // Close modal
+                let modal = bootstrap.Modal.getInstance(document.getElementById('gendermodal'));
+                modal.hide();
+                
+                // Show success message
+                showStatus('Gender updated successfully!', 'success');
+            } else {
+                alert(data.message || 'Failed to update gender');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating gender');
+        })
+        .finally(() => {
+            // Reset button
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    } else {
+        alert("Please select a gender");
+        return false;
+    }
+}
+
+// When modal opens, show current DOB
+document.getElementById('dobmodal').addEventListener('show.bs.modal', function () {
+    let currentDob = document.getElementById("txtDob").innerHTML;
+    
+    if (currentDob && currentDob !== "No data") {
+        document.getElementById("dobInput").value = currentDob;
+    } else {
+        document.getElementById("dobInput").value = "";
+    }
+    
+    document.getElementById("dobInput").classList.remove("is-invalid");
+});
+
+// DOB function with AJAX
+function SaveDob() {
+    let dob = document.getElementById("dobInput").value;
+    
+    if (dob && dob !== "") {
+        // Show loading state
+        let btn = event.target;
+        let originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        
+        fetch('/update-dob', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ dob: dob })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update display
+                document.getElementById("txtDob").innerHTML = data.dob;
+                
+                // Close modal
+                let modal = bootstrap.Modal.getInstance(document.getElementById('dobmodal'));
+                modal.hide();
+                
+                // Show success message
+                showStatus('Date of birth updated successfully!', 'success');
+            } else {
+                alert(data.message || 'Failed to update date of birth');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating date of birth');
+        })
+        .finally(() => {
+            // Reset button
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    } else {
+        alert("Please select a date of birth");
+        document.getElementById("dobInput").classList.add("is-invalid");
+        
+        setTimeout(() => {
+            document.getElementById("dobInput").classList.remove("is-invalid");
+        }, 2000);
+    }
+}
+
 </script>
+@include("dashboard.layout.footer")
