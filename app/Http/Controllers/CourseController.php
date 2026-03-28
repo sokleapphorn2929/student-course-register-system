@@ -14,7 +14,8 @@ class CourseController extends Controller
     public function showCourse()
     {
         $courses = Courses::all();
-        return view("dashboard.course",compact("courses"));
+        $totalCourses = Courses::count();
+        return view("dashboard.course", compact("courses", "totalCourses"));
     }
 
     /**
@@ -70,7 +71,24 @@ class CourseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $course = Courses::find($id);
+
+        if (!$course) {
+            return redirect()->route('course')->with('error', 'Course not found!');
+        }
+
+        $validated = $request->validate([
+            "course_title" => "required|string|max:255|unique:courses,course_title,{$id},_id",
+            "course_description"=>"nullable|string|min:1",
+            "course_price"=>"required|numeric|min:10|max:999.99",
+        ]);
+
+        $course->course_title       = $validated['course_title'];
+        $course->course_description = $validated['course_description'];
+        $course->course_price       = $validated['course_price'];
+        $course->save();
+
+        return redirect()->route('course')->with('success', 'Course updated successfully!');
     }
 
     /**

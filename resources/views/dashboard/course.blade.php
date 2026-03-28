@@ -33,8 +33,8 @@
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-success text-white">
                     <div class="card-body">
-                        <h6>Active Courses</h6>
-                        <h3 class="fw-bold">48</h3>
+                        <h6>Total Courses</h6>
+                        <h3 class="fw-bold">{{ $courses->count() }}</h3>
                     </div>
                 </div>
             </div>
@@ -89,31 +89,32 @@
                             @endif
                             <td class="fw-bold text-primary">{{ $course->course_price }}$</td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal"><i class="bi bi-pencil"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $course->_id }}"><i class="bi bi-pencil"></i></button>
 
-                                <div class="modal fade" id="updateCourseModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal fade" id="updateCourseModal{{ $course->_id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog text-start">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title">Update Course</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form id="courseForm" action="" method="POST">
+                                            <form action="{{ route('course.update', $course->_id) }}" method="POST">
                                                 @csrf
+                                                @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="mb-3">
                                                         <label class="form-label">Course Title</label>
-                                                        <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title">
+                                                        <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title" value="{{ $course->course_title }}" required>
                                                         <div class="invalid-feedback" id="course_title_error"></div>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Course Description</label>
-                                                        <textarea class="form-control" placeholder="Enter description" name="course_description" id="course_description" rows="3"></textarea>
+                                                        <textarea class="form-control" placeholder="Enter description" name="course_description" id="course_description" rows="3">{{ $course->course_description }}</textarea>
                                                         <div class="invalid-feedback" id="course_description_error"></div>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Course Price</label>
-                                                        <input type="number" step="0.01" class="form-control" placeholder="Enter price" name="course_price" id="course_price">
+                                                        <input type="number" step="0.01" class="form-control" placeholder="Enter price" name="course_price" id="course_price" value="{{ $course->course_price }}" required>
                                                         <div class="invalid-feedback" id="course_price_error"></div>
                                                     </div>
                                                 </div>

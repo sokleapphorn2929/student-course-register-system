@@ -35,6 +35,7 @@ Route::middleware("auth")->group(function(){
     Route::post("/course",[CourseController::class, "course"])->name("course.submit");
 
     Route::delete("/course/delete/{id}", [CourseController::class, "destroy"])->name("course.delete");
+    Route::put("/course/update/{id}", [CourseController::class, "update"])->name("course.update");
 });
 // Route::get("/register",[RegisterController::class,"showRegister"])->name("register");
 // Route::post("/register",[RegisterController::class,"register"])->name("register.submit");
