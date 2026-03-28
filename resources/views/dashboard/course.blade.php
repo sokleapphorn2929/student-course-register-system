@@ -80,10 +80,12 @@
                     <tbody>
                         @forelse ($courses as $index => $course)
                         <tr>
-                            <td>{{ $index+1 }}</td>
+                            <td class="text-danger fw-bold">{{ $index+1 }}</td>
                             <td>{{ $course->course_title }}</td>
                             @if ($course->course_description)
-                            <td>{{ $course->course_description }}</td>
+                            <td style="max-width: 200px;" class="text-truncate" title="{{ $course->course_description }}">
+                                {{ $course->course_description }}
+                            </td>
                             @else
                             <td>None</td>
                             @endif

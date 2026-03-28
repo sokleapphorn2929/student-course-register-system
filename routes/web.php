@@ -18,7 +18,7 @@ Route::middleware("guest")->group(function(){
     
     Route::get("/login",[LoginController::class,"showLogin"])->name("login");
     Route::post("/login",[LoginController::class,"login"])->name("login.submit");
-    });
+});
     
 Route::middleware("auth")->group(function(){
     Route::get("/dashboard",[DashboardController::class,"showDashboard"])->name("dashboard");
@@ -37,10 +37,3 @@ Route::middleware("auth")->group(function(){
     Route::delete("/course/delete/{id}", [CourseController::class, "destroy"])->name("course.delete");
     Route::put("/course/update/{id}", [CourseController::class, "update"])->name("course.update");
 });
-// Route::get("/register",[RegisterController::class,"showRegister"])->name("register");
-// Route::post("/register",[RegisterController::class,"register"])->name("register.submit");
-
-// Route::get("/login",[LoginController::class,"showLogin"])->name("login");
-// Route::post("/login",[LoginController::class,"login"])->name("login.submit");
-
-// Route::get("/home",[HomeController::class,"showHome"])->name("home");

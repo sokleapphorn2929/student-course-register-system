@@ -1,7 +1,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-mortarboard-fill me-2"></i>SCR System</a>
+            <a class="navbar-brand fw-bold" href="{{ route("dashboard") }}"><i class="bi bi-mortarboard-fill me-2"></i>SCR System</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
