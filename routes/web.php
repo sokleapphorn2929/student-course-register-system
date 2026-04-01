@@ -29,6 +29,7 @@ Route::middleware("auth")->group(function(){
 
     Route::post('/update-username', [AccountDataController::class, 'updateUsername'])->name('update-username');
     Route::post('/update-gender', [AccountDataController::class, 'updateGender'])->name('update-gender');
+    Route::post('/update-role', [ProfileController::class, 'updateRole'])->name("update-role");
     Route::post('/update-dob', [AccountDataController::class, 'updateDob'])->name('update-dob');
 
     Route::get("/course",[CourseController::class, "showCourse"])->name("course");

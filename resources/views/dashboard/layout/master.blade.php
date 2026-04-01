@@ -22,8 +22,8 @@
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-success text-white">
                     <div class="card-body">
-                        <h6>Active Courses</h6>
-                        <h3 class="fw-bold">48</h3>
+                        <h6>Total Courses</h6>
+                        <h3 class="fw-bold">{{ $courses->count() ?? 0 }}</h3>
                     </div>
                 </div>
             </div>

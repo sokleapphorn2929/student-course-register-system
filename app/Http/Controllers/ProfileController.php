@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class ProfileController extends Controller
 {
@@ -84,6 +85,20 @@ class ProfileController extends Controller
                 'success' => false,
                 'message' => 'Failed to update profile picture: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function updateRole(Request $request)
+    {
+        $request->validate([
+            'role' => 'required|in:Student,Teacher'
+        ]);
+
+        try {
+            Auth::user()->update(['role' => $request->role]);
+            return response()->json(['success' => true, 'role' => $request->role]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update role']);
         }
     }
 

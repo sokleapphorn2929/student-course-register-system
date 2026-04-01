@@ -43,6 +43,7 @@
                         </div>
                         <h2>{{ Auth::user()->username }}</h2>
                         <p class="text-muted small mt-2 mb-0">Click the camera icon to upload a new photo</p>
+                        <div id="toastAlert"></div>
                     </div>
 
                     <div id="uploadStatus" class="text-center mt-2" style="display: none;"></div>
@@ -85,6 +86,42 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                         <button onclick="SaveUsername()" id="btnUsername" type="button" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="border rounded-3 p-3 bg-white">
+                                    <label class="text-secondary small text-uppercase fw-semibold mb-1 d-block">
+                                        <i class="bi bi-person-badge me-1"></i> Role
+                                    </label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span id="txtRole" class="fw-medium">{{ Auth::user()->role }}</span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rolemodal">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </button>
+
+                                        <div class="modal fade" id="rolemodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Update Role</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <select id="rolechoose" class="form-select" aria-label="Default select example">
+                                                            <option selected>Select Gender</option>
+                                                            <option id="vStudent" value="Student">Student</option>
+                                                            <option id="vTeacher" value="Teacher">Teacher</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button onclick="SaveRole()" id="btnRole" type="button" class="btn btn-primary">Update</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -187,7 +224,7 @@
                             </div>
 
                             <div class="d-flex justify-content-center gap-3">
-                                <button type="button" class="btn btn-danger" onclick="location.href='{{ url('/') }}'">Discard</button>
+                                <button type="button" class="btn btn-danger" onclick="location.href='{{ url('/account') }}'">Discard</button>
                                 <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
                             </div>
                         </div>
@@ -239,29 +276,26 @@
 </div>
 
 <script>
+let pendingChanges = {};
 let selectedFile = null;
 
+// ADD THIS BACK - photo preview listener
 document.getElementById('profilePictureUpload').addEventListener('change', function(event) {
     const file = event.target.files[0];
-    
     if (file) {
         if (!file.type.startsWith('image/')) {
             showStatus('Please select a valid image file', 'danger');
             this.value = '';
             return;
         }
-        
         if (file.size > 2 * 1024 * 1024) {
             showStatus('File size must be less than 2MB', 'danger');
             this.value = '';
             return;
         }
-        
         selectedFile = file;
-        
         const reader = new FileReader();
         const container = document.getElementById('profilePictureContainer');
-        
         reader.onload = function(e) {
             container.innerHTML = `
                 <img src="${e.target.result}" 
@@ -271,258 +305,131 @@ document.getElementById('profilePictureUpload').addEventListener('change', funct
             `;
             showStatus('New photo selected. Click "Save changes" to apply.', 'info');
         }
-        
         reader.readAsDataURL(file);
     }
 });
 
-document.getElementById('profileForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    if (!selectedFile) {
-        showStatus('Please select a photo first', 'danger');
-        return;
-    }
-    
-    showStatus('Saving...', 'info');
-    const saveBtn = document.getElementById('saveChangesBtn');
-    saveBtn.disabled = true;
-    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-    
-    const formData = new FormData();
-    formData.append('profile_picture', selectedFile);
-    
-    fetch('{{ route("update-picture.submit") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showStatus('Profile picture updated successfully!', 'success');
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
-        } else {
-            showStatus(data.message || 'Failed to update profile picture.', 'danger');
-            document.getElementById('profilePictureUpload').value = '';
-            selectedFile = null;
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = 'Save changes';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showStatus('An error occurred while uploading.', 'danger');
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = 'Save changes';
-    });
-});
-
-function showStatus(message, type) {
-    let statusDiv = document.getElementById('uploadStatus');
-    if (!statusDiv) {
-        statusDiv = document.createElement('div');
-        statusDiv.id = 'uploadStatus';
-        statusDiv.className = 'text-center mt-2';
-        const profileSection = document.querySelector('.text-center.mb-4');
-        if (profileSection) {
-            profileSection.parentNode.insertBefore(statusDiv, profileSection.nextSibling);
-        }
-    }
-    
-    if (statusDiv) {
-        statusDiv.style.display = 'block';
-        const alertClass = type === 'danger' ? 'alert-danger' : 
-                        (type === 'success' ? 'alert-success' : 'alert-info');
-        statusDiv.innerHTML = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                                ${message}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                              </div>`;
-        
-        setTimeout(() => {
-            if (statusDiv) {
-                statusDiv.style.display = 'none';
-            }
-        }, 3000);
-    }
-}
-
-// Username function with AJAX
 function SaveUsername() {
     let username = document.getElementById("inpUsername").value;
-    
-    if (!username || username.trim() === "") {
-        alert("Please enter a username");
-        return;
-    }
-    
-    // Show loading state
-    let btn = document.getElementById("btnUsername");
-    let originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-    
-    fetch('/update-username', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({ username: username })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update display
-            document.getElementById("txtUsername").innerHTML = data.username;
-            document.getElementById("inpUsername").value = "";
-            
-            // Close modal
-            let modal = bootstrap.Modal.getInstance(document.getElementById('usernamemodal'));
-            modal.hide();
-            
-            // Show success message
-            showStatus('Username updated successfully!', 'success');
-        } else {
-            alert(data.message || 'Failed to update username');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while updating username');
-    })
-    .finally(() => {
-        // Reset button
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    });
+    if (!username || username.trim() === "") { alert("Please enter a username"); return; }
+    pendingChanges.username = username;
+    document.getElementById("txtUsername").innerHTML = username + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">unsaved</span>';
+    bootstrap.Modal.getInstance(document.getElementById('usernamemodal')).hide();
+    showStatus('Username staged. Click "Save changes" to apply.', 'info');
 }
 
-// Gender function with AJAX
 function SaveGender() {
     let gender = document.getElementById("genderchoose").value;
-    
-    if (gender && gender !== "Select Gender") {
-        // Show loading state
-        let btn = document.getElementById("btnGender");
-        let originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-        
-        fetch('/update-gender', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ gender: gender })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update display
-                document.getElementById("txtGender").innerHTML = data.gender;
-                document.getElementById("genderchoose").value = "Select Gender";
-                
-                // Close modal
-                let modal = bootstrap.Modal.getInstance(document.getElementById('gendermodal'));
-                modal.hide();
-                
-                // Show success message
-                showStatus('Gender updated successfully!', 'success');
-            } else {
-                alert(data.message || 'Failed to update gender');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating gender');
-        })
-        .finally(() => {
-            // Reset button
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        });
-    } else {
-        alert("Please select a gender");
-        return false;
-    }
+    if (!gender || gender === "Select Gender") { alert("Please select a gender"); return; }
+    pendingChanges.gender = gender;
+    document.getElementById("txtGender").innerHTML = gender + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">unsaved</span>';
+    bootstrap.Modal.getInstance(document.getElementById('gendermodal')).hide();
+    showStatus('Gender staged. Click "Save changes" to apply.', 'info');
 }
 
-// When modal opens, show current DOB
-document.getElementById('dobmodal').addEventListener('show.bs.modal', function () {
-    let currentDob = document.getElementById("txtDob").innerHTML;
-    
-    if (currentDob && currentDob !== "No data") {
-        document.getElementById("dobInput").value = currentDob;
-    } else {
-        document.getElementById("dobInput").value = "";
-    }
-    
-    document.getElementById("dobInput").classList.remove("is-invalid");
-});
+function SaveRole() {
+    let role = document.getElementById("rolechoose").value;
+    if (!role || role === "Select Gender") { alert("Please select a role"); return; }
+    pendingChanges.role = role;
+    document.getElementById("txtRole").innerHTML = role + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">unsaved</span>';
+    bootstrap.Modal.getInstance(document.getElementById('rolemodal')).hide();
+    showStatus('Role staged. Click "Save changes" to apply.', 'info');
+}
 
-// DOB function with AJAX
 function SaveDob() {
     let dob = document.getElementById("dobInput").value;
-    
-    if (dob && dob !== "") {
-        // Show loading state
-        let btn = event.target;
-        let originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-        
-        fetch('/update-dob', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ dob: dob })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update display
-                document.getElementById("txtDob").innerHTML = data.dob;
-                
-                // Close modal
-                let modal = bootstrap.Modal.getInstance(document.getElementById('dobmodal'));
-                modal.hide();
-                
-                // Show success message
-                showStatus('Date of birth updated successfully!', 'success');
-            } else {
-                alert(data.message || 'Failed to update date of birth');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating date of birth');
-        })
-        .finally(() => {
-            // Reset button
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        });
-    } else {
-        alert("Please select a date of birth");
-        document.getElementById("dobInput").classList.add("is-invalid");
-        
-        setTimeout(() => {
-            document.getElementById("dobInput").classList.remove("is-invalid");
-        }, 2000);
-    }
+    if (!dob) { alert("Please select a date of birth"); return; }
+    pendingChanges.dob = dob;
+    document.getElementById("txtDob").innerHTML = dob + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">unsaved</span>';
+    bootstrap.Modal.getInstance(document.getElementById('dobmodal')).hide();
+    showStatus('Date of birth staged. Click "Save changes" to apply.', 'info');
 }
 
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (!selectedFile && Object.keys(pendingChanges).length === 0) {
+        showStatus('No changes to save.', 'info');
+        return;
+    }
+
+    const saveBtn = document.getElementById('saveChangesBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+    const requests = [];
+
+    if (selectedFile) {
+        const formData = new FormData();
+        formData.append('profile_picture', selectedFile);
+        requests.push(
+            fetch('{{ route("update-picture.submit") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            }).then(r => r.json())
+        );
+    }
+
+    const fieldRoutes = {
+        username: '/update-username',
+        gender:   '/update-gender',
+        role:     '/update-role',
+        dob:      '/update-dob'
+    };
+
+    for (const [field, value] of Object.entries(pendingChanges)) {
+        requests.push(
+            fetch(fieldRoutes[field], {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ [field]: value })
+            }).then(r => r.json())
+        );
+    }
+
+    Promise.all(requests)
+        .then(results => {
+            const allSuccess = results.every(r => r.success);
+            if (allSuccess) {
+                pendingChanges = {};
+                selectedFile = null;
+                showStatus('All changes saved successfully!', 'success');
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showStatus('Some changes failed to save.', 'danger');
+            }
+        })
+        .catch(() => showStatus('An error occurred while saving.', 'danger'))
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'Save changes';
+        });
+});
+
+// ADD THIS BACK - showStatus function was missing
+function showStatus(message, type) {
+    const alertClass = type === 'danger' ? 'alert-danger' : 
+                       type === 'success' ? 'alert-success' : 'alert-info';
+
+    const toast = document.getElementById('toastAlert');
+    toast.innerHTML = `
+        <div class="alert ${alertClass} alert-dismissible fade show mt-2" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    setTimeout(() => {
+        toast.innerHTML = '';
+    }, 3000);
+}
 </script>
 @include("dashboard.layout.footer")

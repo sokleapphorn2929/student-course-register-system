@@ -83,12 +83,32 @@
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
                             <td>{{ $course->course_title }}</td>
                             @if ($course->course_description)
-                            <td style="max-width: 200px;" class="text-truncate" title="{{ $course->course_description }}">
+                            <td style="max-width: 100px;" class="text-truncate" title="{{ $course->course_description }}"
+                                role="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#descModal{{ $course->_id }}">
                                 {{ $course->course_description }}
                             </td>
-                            @else
+
+                            <div class="modal fade" id="descModal{{ $course->_id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">{{ $course->course_title }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ $course->course_description }}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
                             <td>None</td>
-                            @endif
+                        @endif
                             <td class="fw-bold text-primary">{{ $course->course_price }}$</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $course->_id }}"><i class="bi bi-pencil"></i></button>

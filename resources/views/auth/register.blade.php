@@ -98,6 +98,20 @@
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-4">
+                                <label for="role" class="form-label fw-medium">
+                                    <i class="bi bi-person-badge me-1"></i> Register as
+                                </label>
+                                <select class="form-select form-select-lg rounded-3" id="role" name="role" required>
+                                    <option value="" disabled selected">Select your role</option>
+                                    <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
+                                    <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Teacher</option>
+                                </select>
+                                @error('role')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                             
                             <div class="mb-4">
                                 <label for="inp-pw" class="form-label fw-medium">
