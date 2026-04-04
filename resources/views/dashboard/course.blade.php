@@ -26,7 +26,7 @@
                 <div class="card border-0 shadow-sm bg-primary text-white">
                     <div class="card-body">
                         <h6>Total Students</h6>
-                        <h3 class="fw-bold">1,240</h3>
+                        <h3 class="fw-bold">{{ $students->count() ?? 0 }}</h3>
                     </div>
                 </div>
             </div>

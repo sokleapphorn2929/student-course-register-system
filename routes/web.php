@@ -22,6 +22,11 @@ Route::middleware("guest")->group(function(){
     
 Route::middleware("auth")->group(function(){
     Route::get("/dashboard",[DashboardController::class,"showDashboard"])->name("dashboard");
+    Route::post("/dashboard",[DashboardController::class,"student"])->name("student.submit");
+    Route::put("/dashboard/{id}",[DashboardController::class,"update"])->name("student.update");
+    Route::delete("/dashboard/{id}",[DashboardController::class,"destroy"])->name("student.delete");
+
+
     Route::get("/account",[AccountDataController::class,"showAccount"])->name("account");
     Route::post("/logout",[LoginController::class,"logout"])->name("logout"); 
     
