@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Courses;
 use App\Models\Students;
+use App\Models\Teachers;
 use Illuminate\Http\Request;
 use Exception;
 
@@ -14,11 +15,16 @@ class CourseController extends Controller
      */
     public function showCourse()
     {
-        $courses = Courses::all();
+        $teachers = Teachers::all();
+        $totalTeachers = Teachers::count();
+
         $students = Students::all();
-        $totalCourses = Courses::count();
         $totalStudents = Students::count();
-        return view("dashboard.course", compact("students","courses", "totalCourses","totalStudents"));
+
+        $courses = Courses::all();
+        $totalCourses = Courses::count();
+
+        return view("dashboard.course", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers"));
     }
 
     /**

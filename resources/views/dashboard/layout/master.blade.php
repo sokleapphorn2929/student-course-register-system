@@ -10,7 +10,8 @@
             </button>
         </div>
 
-        <div class="row g-3 mb-4">
+        @include("dashboard.layout.total_section")
+        {{-- <div class="row g-3 mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-primary text-white">
                     <div class="card-body">
@@ -43,7 +44,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
@@ -63,6 +64,7 @@
                             <th>Full Name</th>
                             <th>Phone</th>
                             <th>Address</th>
+                            <th>Date of Birth</th>
                             <th>Course</th>
                             <th class="text-center">Actions</th>
                         </tr>
@@ -99,8 +101,9 @@
                         @else
                             <td>None</td>
                         @endif
-                            <td class="fw-bold text-primary">{{ $student->std_address }}</td>
-                            <td class="fw-bold text-primary">{{ $student->course->course_title ?? 'N/A' }}</td>
+                            <td class="text-primary">{{ $student->std_address }}</td>
+                            <td class="text-primary">{{ $student->std_dob }}</td>
+                            <td class="text-primary">{{ $student->course->course_title ?? 'N/A' }}</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $student->_id }}"><i class="bi bi-pencil"></i></button>
 

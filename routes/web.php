@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/",function(){
@@ -26,6 +27,9 @@ Route::middleware("auth")->group(function(){
     Route::put("/dashboard/{id}",[DashboardController::class,"update"])->name("student.update");
     Route::delete("/dashboard/{id}",[DashboardController::class,"destroy"])->name("student.delete");
 
+    Route::get("/teacher",[TeacherController::class,"showTeacher"])->name("teacher");
+    Route::post("/teacher",[TeacherController::class,"teacher"])->name("teacher.submit");
+    Route::put("/teacher/{id}",[TeacherController::class,"update"])->name("teacher.update");
 
     Route::get("/account",[AccountDataController::class,"showAccount"])->name("account");
     Route::post("/logout",[LoginController::class,"logout"])->name("logout"); 

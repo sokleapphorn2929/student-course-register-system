@@ -8,7 +8,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item"><a class="nav-link" href="{{ route("dashboard") }}">Students</a></li>
-                <li class="nav-item"><a class="nav-link" href="">Teachers</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route("teacher") }}">Teachers</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route("course") }}">Courses</a></li>
                 <li class="nav-item me-3"><a class="nav-link" href="#">Enrollment</a></li>
 

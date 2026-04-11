@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Courses;
 use App\Models\Students;
+use App\Models\Teachers;
 use Illuminate\Http\Request;
 // use MongoDB\Laravel\Eloquent\Casts\ObjectId;
 use MongoDB\BSON\ObjectId;
@@ -15,13 +16,16 @@ class DashboardController extends Controller
      */
     public function showDashboard()
     {
+        $teachers = Teachers::all();
+        $totalTeachers = Teachers::count();
+
         $students = Students::all();
         $totalStudents = Students::count();
 
         $courses = Courses::all();
         $totalCourses = Courses::count();
 
-        return view("dashboard.dashboard", compact("students", "totalStudents","courses", "totalCourses"));
+        return view("dashboard.dashboard", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers"));
     }
 
     /**
@@ -105,7 +109,7 @@ class DashboardController extends Controller
         $student->course_id       = $validated['course_id'];
         $student->save();
 
-        return redirect()->route('dashboard')->with('success', 'Student updated successfully!');
+        return redirect()->route('teacher')->with('success', 'Student updated successfully!');
     }
 
     /**

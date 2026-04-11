@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Student-Course Register System</title>
+    <title>Teacher-Course Register System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
     @include("dashboard.layout.header")
+    
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold">Course Management</h2>
+                <h2 class="fw-bold">Teacher Management</h2>
                 <p class="text-muted">Manage student enrollments and course data</p>
             </div>
-            <button type="submit" class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCourseModal">
-                <i class="bi bi-plus-circle me-2"></i> Add New Course
+            <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                <i class="bi bi-plus-circle me-2"></i> Register New Teacher
             </button>
         </div>
 
@@ -35,15 +36,15 @@
                 <div class="card border-0 shadow-sm bg-success text-white">
                     <div class="card-body">
                         <h6>Total Courses</h6>
-                        <h3 class="fw-bold">{{ $courses->count() }}</h3>
+                        <h3 class="fw-bold">{{ $courses->count() ?? 0 }}</h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-warning text-dark">
                     <div class="card-body">
-                        <h6>Pending Invoices</h6>
-                        <h3 class="fw-bold">12</h3>
+                        <h6>Total Teachers</h6>
+                        <h3 class="fw-bold">{{ $teachers->count() ?? 0 }}</h3>
                     </div>
                 </div>
             </div>
@@ -71,35 +72,37 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Price</th>
+                            <th>TCH_ID</th>
+                            <th>Full Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Date of Birth</th>
+                            <th>Hired Date</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($courses as $index => $course)
+                        @forelse ($teachers as $index => $teacher)
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
-                            <td>{{ $course->course_title }}</td>
-                            @if ($course->course_description)
-                            <td style="max-width: 100px;" class="text-truncate" title="{{ $course->course_description }}"
+                            <td>{{ $teacher->teacher_name }}</td>
+                            @if ($teacher->teacher_phone)
+                            <td style="max-width: 100px;" class="text-truncate" title="{{ $teacher->teacher_phone }}"
                                 role="button"
                                 data-bs-toggle="modal"
-                                data-bs-target="#descModal{{ $course->_id }}">
-                                {{ $course->course_description }}
+                                data-bs-target="#descModal{{ $teacher->_id }}">
+                                {{ $teacher->teacher_phone }}
                             </td>
 
-                            <div class="modal fade" id="descModal{{ $course->_id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal fade" id="descModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">{{ $course->course_title }}</h5>
+                                            <h5 class="modal-title">{{ $teacher->teacher_name }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body">
-                                            {{ $course->course_description }}
+                                            {{ $teacher->teacher_phone }}
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -110,35 +113,42 @@
                         @else
                             <td>None</td>
                         @endif
-                            <td class="fw-bold text-primary">{{ $course->course_price }}$</td>
+                            <td class="text-primary">{{ $teacher->teacher_address }}</td>
+                            <td class="text-primary">{{ $teacher->teacher_dob }}</td>
+                            <td class="text-primary">{{ $teacher->hired_date }}</td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $course->_id }}"><i class="bi bi-pencil"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $teacher->_id }}"><i class="bi bi-pencil"></i></button>
 
-                                <div class="modal fade" id="updateCourseModal{{ $course->_id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal fade" id="updateCourseModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog text-start">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Update Course</h5>
+                                                <h5 class="modal-title">Update Teacher</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="{{ route('course.update', $course->_id) }}" method="POST">
+                                            <form action="{{ route('teacher.update', $teacher->_id) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label class="form-label">Course Title</label>
-                                                        <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title" value="{{ $course->course_title }}" required>
-                                                        <div class="invalid-feedback" id="course_title_error"></div>
+                                                        <label class="form-label">Full Name</label>
+                                                        <input name="teacher_name" type="text" class="form-control" placeholder="Enter student name" value="{{ $teacher->teacher_name }}" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Course Description</label>
-                                                        <textarea class="form-control" placeholder="Enter description" name="course_description" id="course_description" rows="3">{{ $course->course_description }}</textarea>
-                                                        <div class="invalid-feedback" id="course_description_error"></div>
+                                                        <label class="form-label">Phone</label>
+                                                        <input name="teacher_phone" type="text" class="form-control" placeholder="Enter phone number" value="{{ $teacher->teacher_phone }}" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Course Price</label>
-                                                        <input type="number" step="0.01" class="form-control" placeholder="Enter price" name="course_price" id="course_price" value="{{ $course->course_price }}" required>
-                                                        <div class="invalid-feedback" id="course_price_error"></div>
+                                                        <label class="form-label">Address</label>
+                                                        <input name="teacher_address" type="text" class="form-control" placeholder="Enter address" value="{{ $teacher->teacher_address }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Date of Birth</label>
+                                                        <input name="teacher_dob" type="date" class="form-control" value="{{ $teacher->teacher_dob }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Hired Date</label>
+                                                        <input name="hired_date" type="date" class="form-control" value="{{ $teacher->hired_date }}" required>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -153,12 +163,12 @@
                                 <!-- Trigger -->
                                 <button class="btn btn-sm btn-outline-danger"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $course->_id }}">
+                                    data-bs-target="#deleteModal{{ $teacher->_id }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
 
                                 <!-- Modal (inside the loop, unique per row) -->
-                                <div class="modal fade" id="deleteModal{{ $course->_id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal fade" id="deleteModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -166,11 +176,11 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you sure you want to delete <strong>{{ $course->name }}</strong>? This action cannot be undone.
+                                                Are you sure you want to delete <strong>{{ $teacher->std_name }}</strong>? This action cannot be undone.
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('course.delete', $course->_id) }}" method="POST">
+                                                <form action="{{ route('student.delete', $teacher->_id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Yes, Delete</button>
@@ -192,39 +202,44 @@
         </div>
     </div>
 
-    <div class="modal fade" id="addCourseModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Course</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="courseForm" action="{{ route('course') }}" method="POST"> {{-- ✅ moved outside modal-body --}}
-                    @csrf
+    <form action="{{ route('teacher.submit') }}" method="post">
+        @csrf
+        <div class="modal fade" id="addStudentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Registration</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Course Title</label>
-                            <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title">
-                            <div class="invalid-feedback" id="course_title_error"></div>
+                            <label class="form-label">Full Name</label>
+                            <input name="teacher_name" type="text" class="form-control" placeholder="Enter teacher name">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Course Description</label>
-                            <textarea class="form-control" placeholder="Enter description" name="course_description" id="course_description" rows="3"></textarea>
-                            <div class="invalid-feedback" id="course_description_error"></div>
+                            <label class="form-label">Phone</label>
+                            <input name="teacher_phone" type="text" class="form-control" placeholder="Enter phone number">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Course Price</label>
-                            <input type="number" step="0.01" class="form-control" placeholder="Enter price" name="course_price" id="course_price">
-                            <div class="invalid-feedback" id="course_price_error"></div>
+                            <label class="form-label">Address</label>
+                            <input name="teacher_address" type="text" class="form-control" placeholder="Enter address">
                         </div>
-                    </div> {{-- ✅ modal-body closes here --}}
+                        <div class="mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input name="teacher_dob" type="date" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hired Date</label>
+                            <input name="hired_date" type="date" class="form-control">
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 
 @include("dashboard.layout.footer")

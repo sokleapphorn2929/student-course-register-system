@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Auth\User as Authenticatable;
+use MongoDB\Laravel\Relations\HasMany;
 
 class Users extends Authenticatable
 {
@@ -17,4 +18,9 @@ class Users extends Authenticatable
         "gender",
         "dob",
     ];
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Teachers::class, 'user_id');
+    }
 }
