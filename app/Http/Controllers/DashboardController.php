@@ -6,6 +6,7 @@ use App\Models\Courses;
 use App\Models\Students;
 use App\Models\Teachers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 // use MongoDB\Laravel\Eloquent\Casts\ObjectId;
 use MongoDB\BSON\ObjectId;
 
@@ -55,6 +56,7 @@ class DashboardController extends Controller
             }
 
         $student_data = [
+            "user_id" => Auth::user()->_id,
             "std_name" => $request->std_name,
             "std_phone" => $request->std_phone,
             "std_address" => $request->std_address,

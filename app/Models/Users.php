@@ -10,6 +10,7 @@ class Users extends Authenticatable
     protected $connection = "mongodb";
     protected $collection = "users";
     protected $fillable = [
+        // "user_id",
         "username",
         "email",
         "password",
@@ -19,8 +20,13 @@ class Users extends Authenticatable
         "dob",
     ];
 
-    public function students(): HasMany
+    public function teachers(): HasMany
     {
         return $this->hasMany(Teachers::class, 'user_id');
+    }
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Students::class, 'user_id');
     }
 }

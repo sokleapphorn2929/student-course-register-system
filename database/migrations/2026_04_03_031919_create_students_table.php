@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $collection) {
             $collection->id();
+            $collection->objectId('user_id')->nullable();
             $collection->string("std_name");
             $collection->string("std_phone");
             $collection->string("std_address");
