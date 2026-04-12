@@ -73,6 +73,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Title</th>
+                            <th>Teacher</th>
                             <th>Description</th>
                             <th>Price</th>
                             <th class="text-center">Actions</th>
@@ -83,6 +84,7 @@
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
                             <td>{{ $course->course_title }}</td>
+                            <td>{{ $course->teachers->teacher_name ?? 'N/A' }}</td>
                             @if ($course->course_description)
                             <td style="max-width: 100px;" class="text-truncate" title="{{ $course->course_description }}"
                                 role="button"
@@ -129,6 +131,20 @@
                                                         <label class="form-label">Course Title</label>
                                                         <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title" value="{{ $course->course_title }}" required>
                                                         <div class="invalid-feedback" id="course_title_error"></div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Select Teacher</label>
+                                                        <select class="form-select @error('teacher_id') is-invalid @enderror" name="teacher_id" required>
+                                                            <option value="" disabled selected>Choose...</option>
+                                                            @foreach($teachers as $teacher)
+                                                                <option value="{{ $teacher->_id }}" {{ old('teacher_id') == $teacher->_id ? 'selected' : '' }}>
+                                                                    {{ $teacher->teacher_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error('teacher_id')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Course Description</label>
@@ -206,6 +222,20 @@
                             <label class="form-label">Course Title</label>
                             <input type="text" class="form-control" placeholder="Enter title" name="course_title" id="course_title">
                             <div class="invalid-feedback" id="course_title_error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Teacher</label>
+                            <select class="form-select @error('teacher_id') is-invalid @enderror" name="teacher_id" required>
+                                <option value="" disabled selected>Choose...</option>
+                                @foreach($teachers as $teacher)
+                                    <option value="{{ $teacher->_id }}" {{ old('teacher_id') == $teacher->_id ? 'selected' : '' }}>
+                                        {{ $teacher->teacher_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('teacher_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Course Description</label>

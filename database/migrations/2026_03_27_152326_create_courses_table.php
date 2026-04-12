@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $collection) {
-            $collection->id("course_id");
+            $collection->id("id");
+            $collection->objectId('teacher_id')->nullable();
             $collection->string("course_title")->unique();
             $collection->text("course_description")->nullable();
             $collection->decimal("courser_price",5,2);

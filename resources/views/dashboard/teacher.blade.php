@@ -180,7 +180,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('student.delete', $teacher->_id) }}" method="POST">
+                                                <form action="{{ route('teacher.delete', $teacher->_id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Yes, Delete</button>

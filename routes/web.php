@@ -30,6 +30,7 @@ Route::middleware("auth")->group(function(){
     Route::get("/teacher",[TeacherController::class,"showTeacher"])->name("teacher");
     Route::post("/teacher",[TeacherController::class,"teacher"])->name("teacher.submit");
     Route::put("/teacher/{id}",[TeacherController::class,"update"])->name("teacher.update");
+    Route::delete("/teacher/{id}",[TeacherController::class,"destroy"])->name("teacher.delete");
 
     Route::get("/account",[AccountDataController::class,"showAccount"])->name("account");
     Route::post("/logout",[LoginController::class,"logout"])->name("logout"); 

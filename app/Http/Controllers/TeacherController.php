@@ -112,6 +112,8 @@ class TeacherController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Teachers::findOrFail($id)->delete();
+        
+        return redirect()->route('teacher.submit')->with('success', 'Teacher deleted successfully!');
     }
 }
