@@ -10,7 +10,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route("dashboard") }}">Students</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route("teacher") }}">Teachers</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route("course") }}">Courses</a></li>
-                <li class="nav-item me-3"><a class="nav-link" href="#">Enrollment</a></li>
+                <li class="nav-item me-3"><a class="nav-link" href="{{ route("enrollment") }}">Enrollment</a></li>
 
                 @auth
                     <li class="nav-item dropdown">

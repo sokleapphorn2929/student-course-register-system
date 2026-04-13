@@ -4,6 +4,7 @@ namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;
+use MongoDB\Laravel\Relations\HasMany;
 
 class Students extends Model
 {
@@ -26,5 +27,10 @@ class Students extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(Users::class, 'user_id',"_id");
+    }
+    
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollments::class, 'course_id');
     }
 }

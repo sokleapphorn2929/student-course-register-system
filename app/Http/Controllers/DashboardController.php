@@ -51,9 +51,9 @@ class DashboardController extends Controller
         ]);
 
         $course = Courses::find($request->course_id);
-            if (!$course) {
-                return back()->withErrors(['course_id' => 'Selected course does not exist.'])->withInput();
-            }
+        if (!$course) {
+            return back()->withErrors(['course_id' => 'Selected course does not exist.'])->withInput();
+        }
 
         $student_data = [
             "user_id" => Auth::user()->_id,

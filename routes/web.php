@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountDataController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
@@ -26,6 +27,11 @@ Route::middleware("auth")->group(function(){
     Route::post("/dashboard",[DashboardController::class,"student"])->name("student.submit");
     Route::put("/dashboard/{id}",[DashboardController::class,"update"])->name("student.update");
     Route::delete("/dashboard/{id}",[DashboardController::class,"destroy"])->name("student.delete");
+
+    Route::get("/enrollment",[EnrollmentController::class,"showEnrollment"])->name("enrollment");
+    Route::post("/enrollment",[EnrollmentController::class,"enrollment"])->name("enrollment.submit");
+    Route::put("/enrollment/{id}",[EnrollmentController::class,"update"])->name("enrollment.update");
+    Route::delete("/enrollment/{id}",[EnrollmentController::class,"destroy"])->name("enrollment.delete");
 
     Route::get("/teacher",[TeacherController::class,"showTeacher"])->name("teacher");
     Route::post("/teacher",[TeacherController::class,"teacher"])->name("teacher.submit");
