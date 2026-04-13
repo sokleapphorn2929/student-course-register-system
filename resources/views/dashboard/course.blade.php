@@ -80,7 +80,7 @@
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="searchTableBody">
                         @forelse ($courses as $index => $course)
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>

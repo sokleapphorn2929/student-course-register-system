@@ -4,7 +4,7 @@
             // Table search
             if (e.target.id === 'studentTableSearch') {
                 const search = e.target.value.toLowerCase();
-                document.querySelectorAll('#enrollmentTableBody > tr').forEach(row => {
+                document.querySelectorAll('#searchTableBody > tr').forEach(row => {
                     const cells = Array.from(row.querySelectorAll('td:not(:last-child)'));
                     const text = cells.map(td => td.textContent).join(' ').toLowerCase();
                     row.style.display = text.includes(search) ? '' : 'none';
