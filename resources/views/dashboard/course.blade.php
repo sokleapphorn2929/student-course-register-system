@@ -72,9 +72,9 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
+                            <th>Course ID</th>
                             <th>Title</th>
-                            <th>Teacher</th>
+                            <th>Teacher Name</th>
                             <th>Description</th>
                             <th>Price</th>
                             <th class="text-center">Actions</th>
