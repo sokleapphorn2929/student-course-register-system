@@ -33,7 +33,7 @@ class StudentSeeder extends Seeder
             $students[] = [
                 "user_id"     => $user->_id,
                 "std_name"    => $names[array_rand($names)] . " " . $names[array_rand($names)],
-                "std_phone"   => "0" . rand(10, 99) . "-" . rand(100, 999) . "-" . rand(1000, 9999),
+                "std_phone"   => "0" . rand(10, 99)  . rand(100, 999)  . rand(1000, 9999),
                 "std_address" => $addresses[array_rand($addresses)],
                 "std_dob"     => date("Y-m-d", strtotime("-" . rand(18, 30) . " years -" . rand(0, 365) . " days")),
                 "course_id"   => $courses[array_rand($courses->toArray())]->_id,

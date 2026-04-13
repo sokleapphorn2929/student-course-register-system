@@ -11,6 +11,7 @@
         </div>
 
         @include("dashboard.layout.total_section")
+        {{-- <input type="text" id="studentTableSearch" class="form-control mb-2" placeholder="Search student..."> --}}
         {{-- <div class="row g-3 mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm bg-primary text-white">
@@ -101,9 +102,9 @@
                         @else
                             <td>None</td>
                         @endif
-                            <td class="text-primary">{{ $student->std_address }}</td>
-                            <td class="text-primary">{{ $student->std_dob }}</td>
-                            <td class="text-primary">{{ $student->course->course_title ?? 'N/A' }}</td>
+                            <td>{{ $student->std_address }}</td>
+                            <td>{{ $student->std_dob }}</td>
+                            <td>{{ $student->course->course_title ?? 'N/A' }}</td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $student->_id }}"><i class="bi bi-pencil"></i></button>
 
@@ -139,7 +140,7 @@
                                                         <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
                                                             <option value="" disabled>Choose...</option>
                                                             @foreach($courses as $course)
-                                                                <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->id ? 'selected' : '' }}>
+                                                                <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->_id ? 'selected' : '' }}>
                                                                     {{ $course->course_title }}
                                                                 </option>
                                                             @endforeach

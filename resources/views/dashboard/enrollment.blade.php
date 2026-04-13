@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SCRS - Enrollment</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/sXXb7q2w/scrs.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -81,7 +82,7 @@
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="enrollmentTableBody">
                         @forelse ($enrollments as $index => $enrollment)
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
@@ -303,17 +304,16 @@
         </div>
     </form>
 
-    <script>
-        document.querySelectorAll('[id^="studentSearch_"]').forEach(function (input) {
-            input.addEventListener('input', function () {
-                const search = this.value.toLowerCase();
-                const suffix = this.id.replace('studentSearch_', '');
-                const select = document.getElementById('studentSelect_' + suffix);
-                if (!select) return;
-                select.querySelectorAll('option').forEach(option => {
-                    option.style.display = option.text.toLowerCase().includes(search) ? '' : 'none';
-                });
+    {{-- <script>
+        document.addEventListener('input', function (e) {
+            if (!e.target.matches('[id^="studentSearch_"]')) return;
+            const search = e.target.value.toLowerCase();
+            const suffix = e.target.id.replace('studentSearch_', '');
+            const select = document.getElementById('studentSelect_' + suffix);
+            if (!select) return;
+            select.querySelectorAll('option').forEach(option => {
+                option.style.display = option.text.toLowerCase().includes(search) ? '' : 'none';
             });
         });
-    </script>
+    </script> --}}
 @include("dashboard.layout.footer")

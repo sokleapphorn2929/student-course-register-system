@@ -82,7 +82,7 @@ class DashboardController extends Controller
 
         Students::create($student_data);
 
-        return redirect()->route('student.submit')->with('success', 'Student has been added successfully!');
+        return redirect()->route('dashboard')->with('success', 'Student has been added successfully!');
     }
 
     /**
@@ -106,17 +106,19 @@ class DashboardController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // dd($request->all(), $id);
+
         $student = Students::find($id);
 
         if (!$student) {
-            return redirect()->route('dashboard')->with('error', 'Course not found!');
+            return redirect()->route('dashboard')->with('error', 'Student not found!');
         }
 
         $validated = $request->validate([
             "std_name" => "required|string|max:255",
             "std_phone" => "required|string|max:10|regex:/^[0-9]+$/",
             "std_address" => "required|string|max:255",
-            "std_dob" => "required|date|before:today",
+            "std_dob" => "required|date|before_or_equal:today",
             "course_id" => "required|exists:courses,_id",
         ]);
 
@@ -127,7 +129,7 @@ class DashboardController extends Controller
         $student->course_id       = $validated['course_id'];
         $student->save();
 
-        return redirect()->route('teacher')->with('success', 'Student updated successfully!');
+        return redirect()->route("dashboard")->with('success', 'Student updated successfully!');
     }
 
     /**

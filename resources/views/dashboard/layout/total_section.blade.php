@@ -65,3 +65,4 @@
                 </div>
             </div>
         </div>
+        <input type="text" id="studentTableSearch" class="form-control mb-2" placeholder="Search...">
