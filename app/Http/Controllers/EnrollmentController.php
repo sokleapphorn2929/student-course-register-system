@@ -26,6 +26,11 @@ class EnrollmentController extends Controller
 
         $enrollments = Enrollments::all();
 
+        $activeCount    = Enrollments::where('status', 'active')->count();
+        $pendingCount   = Enrollments::where('status', 'pending')->count();
+        $completedCount = Enrollments::where('status', 'completed')->count();
+        $droppedCount   = Enrollments::where('status', 'dropped')->count();
+
         $statuses = [
             (object)['_id' => 'pending',   'status_title' => 'Pending'],
             (object)['_id' => 'active',    'status_title' => 'Active'],
@@ -33,7 +38,8 @@ class EnrollmentController extends Controller
             (object)['_id' => 'dropped',   'status_title' => 'Dropped'],
         ];
 
-        return view("dashboard.enrollment", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers", "enrollments", "statuses"));
+        return view("dashboard.enrollment", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers", "enrollments", "statuses",
+        "activeCount", "pendingCount", "completedCount", "droppedCount"));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Courses;
+use App\Models\Enrollments;
 use App\Models\Students;
 use App\Models\Teachers;
 use Illuminate\Http\Request;
@@ -26,7 +27,22 @@ class DashboardController extends Controller
         $courses = Courses::all();
         $totalCourses = Courses::count();
 
-        return view("dashboard.dashboard", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers"));
+        $enrollments = Enrollments::all();
+
+        $statuses = [
+            (object)['_id' => 'pending',   'status_title' => 'Pending'],
+            (object)['_id' => 'active',    'status_title' => 'Active'],
+            (object)['_id' => 'completed', 'status_title' => 'Completed'],
+            (object)['_id' => 'dropped',   'status_title' => 'Dropped'],
+        ];
+
+        $activeCount    = Enrollments::where('status', 'active')->count();
+        $pendingCount   = Enrollments::where('status', 'pending')->count();
+        $completedCount = Enrollments::where('status', 'completed')->count();
+        $droppedCount   = Enrollments::where('status', 'dropped')->count();
+
+        return view("dashboard.dashboard", compact("students", "totalStudents","courses", "totalCourses", "teachers", "totalTeachers", "enrollments", "statuses",
+        "activeCount", "pendingCount", "completedCount", "droppedCount"));
     }
 
     /**
