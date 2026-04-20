@@ -115,7 +115,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <select id="rolechoose" class="form-select" aria-label="Default select example">
-                                                            <option selected>Select Gender</option>
+                                                            <option selected>Select Role</option>
                                                             <option id="vStudent" value="Student">Student</option>
                                                             <option id="vTeacher" value="Teacher">Teacher</option>
                                                         </select>
@@ -243,9 +243,33 @@
                                     <span class="fw-semibold d-block">Delete Account</span>
                                     <small class="text-secondary">Permanently delete your account and all associated data. This action cannot be undone.</small>
                                 </div>
-                                <button class="btn btn-danger" disabled>
+                                <button class="btn btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
                                     <i class="bi bi-trash3 me-1"></i> Delete Account
                                 </button>
+
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete your account? This action cannot be undone.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{{ route('account.delete.self') }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

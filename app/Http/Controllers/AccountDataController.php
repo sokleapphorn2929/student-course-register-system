@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Enrollments;
+use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +12,9 @@ class AccountDataController extends Controller
 {
     public function showAccount()
     {
-        return view('dashboard.account'); // Make sure this matches your blade file name
+        $users = Users::all();
+
+        return view('dashboard.account', compact("users"));
     }
 
     // Update username
@@ -157,5 +161,16 @@ class AccountDataController extends Controller
                 'message' => 'Failed to update profile picture: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function deleteAccount()
+    {
+        $user = Auth::user();
+        
+        Auth::logout();
+        
+        $user->delete();
+        
+        return redirect('/')->with('success', 'Your account has been deleted.');
     }
 }

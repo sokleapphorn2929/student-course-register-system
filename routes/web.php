@@ -39,6 +39,7 @@ Route::middleware("auth")->group(function(){
     Route::delete("/teacher/{id}",[TeacherController::class,"destroy"])->name("teacher.delete");
 
     Route::get("/account",[AccountDataController::class,"showAccount"])->name("account");
+    Route::delete('/account/delete', [AccountDataController::class, 'deleteAccount'])->name('account.delete.self');
     Route::post("/logout",[LoginController::class,"logout"])->name("logout"); 
     
     Route::post('/update-picture', [ProfileController::class, 'updateProfilePicture'])->name('update-picture.submit');
