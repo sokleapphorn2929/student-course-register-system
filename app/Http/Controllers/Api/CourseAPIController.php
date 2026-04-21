@@ -17,7 +17,7 @@ class CourseAPIController extends Controller
 
         return response()->json([
             'message' => 'Get all courses successfully',
-            'data' => $course
+            'data' => $course->load("Teachers")
         ], 200);
     }
 

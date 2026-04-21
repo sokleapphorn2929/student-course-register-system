@@ -33,4 +33,9 @@ class Students extends Model
     {
         return $this->hasMany(Enrollments::class, 'course_id');
     }
+
+    // public function enrollments(): HasMany
+    // {
+    //     return $this->hasMany(Enrollments::class, 'std_id', '_id');
+    // }
 }

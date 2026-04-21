@@ -70,7 +70,7 @@ class CourseController extends Controller
             "course_price"=>$request->course_price,
         ];
 
-        Courses::create($request->only(['course_title', 'course_description', 'course_price']));
+        Courses::create($request->only($course_data));
 
         return redirect()->route('course')->with('success', 'Course has been added successfully!');
 

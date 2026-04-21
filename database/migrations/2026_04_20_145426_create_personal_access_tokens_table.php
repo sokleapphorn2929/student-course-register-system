@@ -1,24 +1,22 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use MongoDB\Laravel\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('tokenable_id');
-            $table->string('tokenable_type');
-            $table->index(['tokenable_id', 'tokenable_type']);
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
+        Schema::create('personal_access_tokens', function (Blueprint $collection) {
+            $collection->id();
+            //$collection->morphs('tokenable');
+            $collection->text('name');
+            $collection->string('token', 64)->unique();
+            $collection->text('abilities')->nullable();
+            $collection->timestamp('last_used_at')->nullable();
+            $collection->timestamp('expires_at')->nullable()->index();
+            $collection->timestamps();
         });
     }
 
