@@ -35,7 +35,7 @@ class RegisterController extends Controller
             "email" => "required | string | email | unique:users,email | max:255",
             "password" => "required | string | min:8",
             "profile_pic" => "nullable | image | mimes:jpeg,png,jpg,gif,svg | max:2048",
-            'role' => 'required|in:student,teacher',
+            'role' => 'required|in:Admin,Student,Teacher',
         ]);
 
         $userData = [

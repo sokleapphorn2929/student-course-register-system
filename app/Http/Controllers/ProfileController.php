@@ -91,7 +91,7 @@ class ProfileController extends Controller
     public function updateRole(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:Student,Teacher'
+            'role' => 'required|in:Admin,Student,Teacher'
         ]);
 
         try {

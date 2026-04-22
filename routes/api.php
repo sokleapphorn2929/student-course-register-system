@@ -12,14 +12,17 @@ use App\Http\Controllers\Api\TeacherAPIController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::prefix("users")->group(function(){
+Route::post("/register",[AuthController::class,"store"]);
+Route::post("/login",[AuthController::class,"login"]);
+
+Route::prefix("auth")->middleware(["auth:sanctum",'Admin'])->group(function(){
     Route::get("/",[AuthController::class,"index"]);
-    Route::post("/register",[AuthController::class,"store"]);
+    Route::get("/me",[AuthController::class,"me"]);
     Route::get("/{id}",[AuthController::class,"show"]);
-    Route::post("/login",[AuthController::class,"login"]);
+    Route::post("/logout",[AuthController::class,"logout"]);
 });
 
-Route::prefix("teachers")->group(function(){
+Route::prefix("teachers")->middleware(["auth:sanctum","Teacher"])->group(function(){
     Route::get("/",[TeacherAPIController::class,"index"]);
     Route::post("/",[TeacherAPIController::class,"store"]);
     Route::get("/{id}",[TeacherAPIController::class,"show"]);
@@ -27,7 +30,7 @@ Route::prefix("teachers")->group(function(){
     Route::delete("/{id}",[TeacherAPIController::class,"destroy"]);
 });
 
-Route::prefix("course")->group(function(){
+Route::prefix("course")->middleware("auth:sanctum")->group(function(){
     Route::get("/",[CourseAPIController::class,"index"]);
     Route::post("/",[CourseAPIController::class,"store"]);
     Route::get("/{id}",[CourseAPIController::class,"show"]);
@@ -35,7 +38,7 @@ Route::prefix("course")->group(function(){
     Route::delete("/{id}",[CourseAPIController::class,"destroy"]);
 });
 
-Route::prefix("student")->group(function(){
+Route::prefix("student")->middleware("auth:sanctum")->group(function(){
     Route::get("/",[StudentAPIController::class,"index"]);
     Route::post("/",[StudentAPIController::class,"store"]);
     Route::get("/{id}",[StudentAPIController::class,"show"]);
@@ -43,7 +46,7 @@ Route::prefix("student")->group(function(){
     Route::delete("/{id}",[StudentAPIController::class,"destroy"]);
 });
 
-Route::prefix("enrollment")->group(function(){
+Route::prefix("enrollment")->middleware(["auth:sanctum","Teacher"])->group(function(){
     Route::get("/",[EnrollmentAPIController::class,"index"]);
     Route::post("/",[EnrollmentAPIController::class,"store"]);
     Route::get("/{id}",[EnrollmentAPIController::class,"show"]);

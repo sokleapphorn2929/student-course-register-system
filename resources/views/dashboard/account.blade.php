@@ -116,6 +116,7 @@
                                                     <div class="modal-body">
                                                         <select id="rolechoose" class="form-select" aria-label="Default select example">
                                                             <option selected>Select Role</option>
+                                                            <option id="vAdmin" value="Admin">Admin</option>
                                                             <option id="vStudent" value="Student">Student</option>
                                                             <option id="vTeacher" value="Teacher">Teacher</option>
                                                         </select>
@@ -354,7 +355,7 @@ function SaveGender() {
 
 function SaveRole() {
     let role = document.getElementById("rolechoose").value;
-    if (!role || role === "Select Gender") { alert("Please select a role"); return; }
+    if (!role || role === "Select Role") { alert("Please select a role"); return; }
     pendingChanges.role = role;
     document.getElementById("txtRole").innerHTML = role + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">unsaved</span>';
     bootstrap.Modal.getInstance(document.getElementById('rolemodal')).hide();

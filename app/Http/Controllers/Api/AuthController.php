@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Users;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -32,7 +33,7 @@ class AuthController extends Controller
             "email" => "required | string | email | unique:users,email | max:255",
             "password" => "required | string | min:8",
             "profile_pic" => "nullable | image | mimes:jpeg,png,jpg,gif,svg | max:2048",
-            'role' => 'required|in:Student,Teacher',
+            'role' => 'required|in:Admin,Student,Teacher',
         ]);
 
         $user = Users::create([
@@ -87,6 +88,28 @@ class AuthController extends Controller
             "data" => $user,
             "token" => $token
         ],200)->withCookie($cookie);
+    }
+
+    public function logout(Request $request){
+        $user = $request->user();
+
+        if($user){
+            $user -> tokens() -> delete();
+        }
+
+        $cookie = Cookie::forget("auth_token");
+
+        return response()->json([
+            "message" => "Logout Successful!",
+        ],200)->withCookie($cookie);
+    }
+
+    public function me(Request $request){
+        $user = $request->user();
+        return response()->json([
+            "message" => "Get user information successful!",
+            "data" => $user
+        ],200);
     }
 
     /**
