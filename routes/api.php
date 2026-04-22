@@ -14,12 +14,14 @@ use App\Http\Controllers\Api\TeacherAPIController;
 
 Route::post("/register",[AuthController::class,"store"]);
 Route::post("/login",[AuthController::class,"login"]);
+Route::post("/logout",[AuthController::class,"logout"]);
 
 Route::prefix("auth")->middleware(["auth:sanctum",'Admin'])->group(function(){
     Route::get("/",[AuthController::class,"index"]);
     Route::get("/me",[AuthController::class,"me"]);
     Route::get("/{id}",[AuthController::class,"show"]);
-    Route::post("/logout",[AuthController::class,"logout"]);
+    Route::put("/{id}",[AuthController::class,"update"]);
+    Route::delete("/{id}",[AuthController::class,"destroy"]);
 });
 
 Route::prefix("teachers")->middleware(["auth:sanctum","Teacher"])->group(function(){

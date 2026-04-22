@@ -7,6 +7,7 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -28,21 +29,33 @@ class AuthController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             "username" => "required | string | max:255",
             "email" => "required | string | email | unique:users,email | max:255",
             "password" => "required | string | min:8",
             "profile_pic" => "nullable | image | mimes:jpeg,png,jpg,gif,svg | max:2048",
             'role' => 'required|in:Admin,Student,Teacher',
+            'gender' => 'nullable|string|in:Male,Female',
+            'dob' => 'nullable|date|before:today'
         ]);
 
+        $profile_pic = null;
+        if($request->hasFile('profile_pic')){
+            $profile_pic = $request->file('profile_pic')->store('profile-pictures', 'public');
+        }
+
         $user = Users::create([
-            "username" => $request->username,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "profile_pic" => $request->profile_pic,
-            'role' => $request->role,
+            "username"    => $request->username,
+            "email"       => $request->email,
+            "password"    => Hash::make($request->password),
+            "profile_pic" => $profile_pic,
+            'role'        => $request->role,
+            "gender"      => $request->gender,
+            "dob"         => $request->dob
         ]);
+            
+
+        // $user = Users::create($validated);
 
         return response()->json([
             'message' => 'Create user successfully',
@@ -137,7 +150,36 @@ class AuthController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = Users::find($id);
+        if(!$user){
+            return response()->json([
+                "message" => "User not found!"
+            ],404);
+        }
+
+        $validated = $request->validate([
+            "username" => "sometimes | string | max:255",
+            "email" => "sometimes | string | email | unique:users,email | max:255",
+            "password" => "sometimes | string | min:8",
+            "profile_pic" => "sometimes | image | mimes:jpeg,png,jpg,gif,svg | max:2048",
+            'role' => 'sometimes|in:Admin,Student,Teacher',
+            'gender' => 'sometimes|string|in:Male,Female',
+            'dob' => 'sometimes|date|before:today'
+        ]);
+
+        if($request->hasFile("profile_pic")){
+            if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
+                Storage::disk("public")->delete($user->profile_pic);
+            }
+            $validated["profile_pic"] = $request->file('profile_pic')->store('profile-pictures', 'public');
+        }
+
+        $user -> update($validated);
+
+        return response()->json([
+            "message" => "User update successful!",
+            "data" => $user
+        ],200);
     }
 
     /**
@@ -145,6 +187,22 @@ class AuthController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = Users::find($id);
+        if(!$user){
+            return response()->json([
+                "message" => "User not found!"
+            ],404);
+        }
+
+        if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
+            Storage::disk("public")->delete($user->profile_pic);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Delete user successfully',
+            'data' => null
+        ], 200);
     }
 }

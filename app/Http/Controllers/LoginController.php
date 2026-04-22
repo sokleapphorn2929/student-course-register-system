@@ -43,10 +43,23 @@ class LoginController extends Controller
             ->withInput($request->only("email"));
         }
 
-        if(Auth::attempt($credential)){
-            $request->session()->regenerate();
-            return redirect()->intended(route("dashboard"))->with("success","Login Successful!");
-        }
+        $request->session()->regenerate();
+        return redirect()->intended(route("dashboard"))->with("success","Login Successful!");
+
+        $token = Auth::user()->createToken(
+            "auth_token",
+            ['*'],
+            now()->addDay()
+        )->plainTextToken;
+
+        return redirect()->intended(route("dashboard"))
+            ->with("success", "Login Successful!")
+            ->with("token", $token);
+
+        // if(Auth::attempt($credential)){
+        //     $request->session()->regenerate();
+        //     return redirect()->intended(route("dashboard"))->with("success","Login Successful!");
+        // }
     }
 
     public function logout(Request $request) {

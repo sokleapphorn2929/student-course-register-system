@@ -25,6 +25,17 @@ class Users extends Authenticatable
         "gender",
         "dob",
     ];
+    protected $appends = ["profile_url"];
+    protected $casts = [
+        "status" => "boolean"
+    ];
+
+    public function getProfileUrlAttribute(){
+        if(!empty($this->profile_pic)){
+            return asset('storage/'.$this->profile_pic);
+        }
+        return null;
+    }
 
     public function teachers(): HasMany
     {
