@@ -16,6 +16,7 @@ Route::prefix("users")->group(function(){
     Route::get("/",[AuthController::class,"index"]);
     Route::post("/register",[AuthController::class,"store"]);
     Route::get("/{id}",[AuthController::class,"show"]);
+    Route::post("/login",[AuthController::class,"login"]);
 });
 
 Route::prefix("teachers")->group(function(){

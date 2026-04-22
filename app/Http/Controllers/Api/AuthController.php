@@ -49,6 +49,46 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function login(Request $request){
+        $request->validate([
+            "email" => "required | string | email | max:255",
+            "password" => "required | string | min:8",
+        ]);
+
+        $user = Users::where("email",$request->email)->first();
+        if(!$user){
+            return response()->json([
+                "message" => "User not found!!"
+            ],404);
+        }
+
+        if(!Hash::check($request->password,$user->password)){
+            return response()->json([
+                "message" => "Invalid credentials"
+            ],401);
+        }
+
+        $token_result = $user->createToken("auth_token");
+        $token = $token_result->plainTextToken;
+
+        $cookie = cookie(
+            "auth_token",
+            $token,
+            60*24,
+            null,
+            true,
+            true,
+            false,
+            "Strict"
+        );
+
+        return response()->json([
+            "message" => "Login Successful!",
+            "data" => $user,
+            "token" => $token
+        ],200)->withCookie($cookie);
+    }
+
     /**
      * Display the specified resource.
      */
