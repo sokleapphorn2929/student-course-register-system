@@ -26,4 +26,13 @@ class AppServiceProvider extends ServiceProvider
         View::share('courses', Courses::all());
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
+    // public function boot(): void
+    // {
+    //     // Defer the query execution using a view composer
+    //     View::composer('*', function ($view) {
+    //         $view->with('courses', Courses::all());
+    //     });
+        
+    //     Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+    // }
 }
