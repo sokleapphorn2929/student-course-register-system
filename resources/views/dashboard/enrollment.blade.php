@@ -18,9 +18,11 @@
                 <h2 class="fw-bold">Enrollment Management</h2>
                 <p class="text-muted">Manage student enrollments and course data</p>
             </div>
-            <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                <i class="bi bi-plus-circle me-2"></i>Add Enrollment
-            </button>
+            @if (Auth::user()->role === "Admin")    
+                <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i class="bi bi-plus-circle me-2"></i>Add Enrollment
+                </button>
+            @endif
         </div>
 
         @include("dashboard.layout.total_section")
@@ -111,116 +113,123 @@
                                 <span class="badge bg-{{ $statusColor }}">{{ ucfirst($enrollment->payment_status) }}</span>
                             </td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $enrollment->_id }}"><i class="bi bi-pencil"></i></button>
+                                @if (Auth::user()->role !== "Student")
+                                
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $enrollment->_id }}"><i class="bi bi-pencil"></i></button>
 
-                                <div class="modal fade" id="updateCourseModal{{ $enrollment->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog text-start">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Update Teacher</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('enrollment.update', $enrollment->_id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Student Name</label>
-                                                        <input type="text" class="form-control mb-1" 
-                                                            id="studentSearch_{{ $enrollment->_id }}" 
-                                                            placeholder="Search student...">
-                                                        <select name="std_id" class="form-select" 
-                                                            id="studentSelect_{{ $enrollment->_id }}" required>
-                                                            <option value="" disabled>Choose...</option>
-                                                            @foreach($students as $student)
-                                                                <option value="{{ $student->_id }}" 
-                                                                    {{ old('std_id', $enrollment->std_id) == $student->_id ? 'selected' : '' }}>
-                                                                    {{ $student->std_name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Select Course</label>
-                                                        <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
-                                                            <option value="" disabled>Choose...</option>
-                                                            @foreach($courses as $course)
-                                                                <option value="{{ $course->_id }}" {{ old('course_id') == $course->_id ? 'selected' : '' }}>
-                                                                    {{ $course->course_title }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('course_id')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Status</label>
-                                                        <select class="form-select" name="status" required>
-                                                            <option value="" disabled>Choose...</option>
-                                                            @foreach($statuses as $status)
-                                                                <option value="{{ $status->_id }}"
-                                                                    {{ old('status', $enrollment->status) == $status->_id ? 'selected' : '' }}>
-                                                                    {{ $status->status_title }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Enrolled At</label>
-                                                        <input name="enrolled_at" type="date" class="form-control" value="{{ $enrollment->enrolled_at }}">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Payment Status</label>
-                                                        <select class="form-select" name="payment_status" required>
-                                                            <option value="" disabled>Choose...</option>
-                                                            @foreach(['paid' => 'Paid', 'unpaid' => 'Unpaid', 'refunded' => 'Refunded'] as $val => $label)
-                                                                <option value="{{ $val }}"
-                                                                    {{ old('payment_status', $enrollment->payment_status) == $val ? 'selected' : '' }}>
-                                                                    ● {{ $label }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                    <div class="modal fade" id="updateCourseModal{{ $enrollment->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog text-start">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Teacher</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Trigger -->
-                                <button class="btn btn-sm btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $enrollment->_id }}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                                <!-- Modal (inside the loop, unique per row) -->
-                                <div class="modal fade" id="deleteModal{{ $enrollment->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Confirm Delete</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete <strong>{{ $enrollment->std_name }}</strong>? This action cannot be undone.
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('enrollment.delete', $enrollment->_id) }}" method="POST">
+                                                <form action="{{ route('enrollment.update', $enrollment->_id) }}" method="POST">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Student Name</label>
+                                                            <input type="text" class="form-control mb-1" 
+                                                                id="studentSearch_{{ $enrollment->_id }}" 
+                                                                placeholder="Search student...">
+                                                            <select name="std_id" class="form-select" 
+                                                                id="studentSelect_{{ $enrollment->_id }}" required>
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach($students as $student)
+                                                                    <option value="{{ $student->_id }}" 
+                                                                        {{ old('std_id', $enrollment->std_id) == $student->_id ? 'selected' : '' }}>
+                                                                        {{ $student->std_name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Select Course</label>
+                                                            <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach($courses as $course)
+                                                                    <option value="{{ $course->_id }}" {{ old('course_id') == $course->_id ? 'selected' : '' }}>
+                                                                        {{ $course->course_title }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                            @error('course_id')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Status</label>
+                                                            <select class="form-select" name="status" required>
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach($statuses as $status)
+                                                                    <option value="{{ $status->_id }}"
+                                                                        {{ old('status', $enrollment->status) == $status->_id ? 'selected' : '' }}>
+                                                                        {{ $status->status_title }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Enrolled At</label>
+                                                            <input name="enrolled_at" type="date" class="form-control" value="{{ $enrollment->enrolled_at }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Payment Status</label>
+                                                            <select class="form-select" name="payment_status" required>
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach(['paid' => 'Paid', 'unpaid' => 'Unpaid', 'refunded' => 'Refunded'] as $val => $label)
+                                                                    <option value="{{ $val }}"
+                                                                        {{ old('payment_status', $enrollment->payment_status) == $val ? 'selected' : '' }}>
+                                                                        ● {{ $label }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+
+                                    <!-- Trigger -->
+                                    @if (Auth::user()->role === "Admin")    
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal{{ $enrollment->_id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    @endif
+
+                                    <!-- Modal (inside the loop, unique per row) -->
+                                    <div class="modal fade" id="deleteModal{{ $enrollment->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirm Delete</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete <strong>{{ $enrollment->std_name }}</strong>? This action cannot be undone.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="{{ route('enrollment.delete', $enrollment->_id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-muted small">View only</span>
+                                @endif
                             </td>
                         </tr>
                         @empty

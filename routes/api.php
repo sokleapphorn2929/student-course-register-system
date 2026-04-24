@@ -58,7 +58,7 @@ Route::middleware(["auth:sanctum","Admin"])->group(function(){
     });
 });
 
-Route::prefix("teachers")->middleware(["auth:sanctum","Admin","Teacher"])->group(function(){
+Route::prefix("teachers")->middleware("auth:sanctum")->group(function(){
     Route::get("/",[TeacherAPIController::class,"index"]);
     Route::get("/{id}",[TeacherAPIController::class,"show"]);
 });
@@ -73,7 +73,7 @@ Route::prefix("student")->middleware("auth:sanctum")->group(function(){
     Route::get("/{id}",[StudentAPIController::class,"show"]);
 });
 
-Route::prefix("enrollment")->middleware(["auth:sanctum","role:Admin,Teacher"])->group(function(){
+Route::prefix("enrollment")->middleware("auth:sanctum")->group(function(){
     Route::get("/",[EnrollmentAPIController::class,"index"]);
     Route::get("/{id}",[EnrollmentAPIController::class,"show"]);
 });

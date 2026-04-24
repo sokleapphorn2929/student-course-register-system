@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Users;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Exception;
 
 class RegisterController extends Controller
 {
+    public function __construct(
+        protected CloudinaryService $cloudinary
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -46,8 +50,29 @@ class RegisterController extends Controller
         ];
 
         if ($request->hasFile('profile_pic')) {
-            $path = $request->file('profile_pic')->store('uploads', 'public');
-            $userData['profile_pic'] = $path;
+            // $path = $request->file('profile_pic')->store('uploads', 'public');
+            // $userData['profile_pic'] = $path;
+            
+            try {
+                $result = $this->cloudinary->upload(
+                    $request->file('profile_pic')->getRealPath(),
+                    [
+                        'folder' => 'profile-pictures',
+                        'public_id' => 'user_' . time() . '_' . uniqid(),
+                        'transformation' => [
+                            'width' => 500,
+                            'height' => 500,
+                            'crop' => 'fill'
+                        ]
+                    ]
+                );
+
+                $userData['profile_pic'] = $result['secure_url'];
+                $userData['profile_pic_public_id'] = $result['public_id'];
+                
+            } catch (Exception $err) {
+                return back()->withErrors(["profile_pic" => "Failed to upload image to Cloudinary: " . $err->getMessage()]);
+            }
         }
 
         try{

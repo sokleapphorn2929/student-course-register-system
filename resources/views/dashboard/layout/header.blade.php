@@ -8,10 +8,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item"><a class="nav-link" href="{{ route("dashboard") }}">Students</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route("teacher") }}">Teachers</a></li>
+                {{-- @if (Auth::user()->role !== "Student")        --}}
+                    <li class="nav-item"><a class="nav-link" href="{{ route("teacher") }}">Teachers</a></li>
+                {{-- @endif --}}
                 <li class="nav-item"><a class="nav-link" href="{{ route("course") }}">Courses</a></li>
-                <li class="nav-item me-3"><a class="nav-link" href="{{ route("enrollment") }}">Enrollment</a></li>
-
+                {{-- @if (Auth::user()->role !== "Student") --}}
+                    <li class="nav-item me-3"><a class="nav-link" href="{{ route("enrollment") }}">Enrollment</a></li>
+                {{-- @endif --}}
                 @auth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

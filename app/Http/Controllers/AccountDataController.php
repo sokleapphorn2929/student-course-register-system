@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Enrollments;
 use App\Models\Users;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AccountDataController extends Controller
 {
+    public function __construct(
+        protected CloudinaryService $cloudinary
+    ) {}
+    
     public function showAccount()
     {
         $users = Users::all();
@@ -166,6 +171,10 @@ class AccountDataController extends Controller
     public function deleteAccount()
     {
         $user = Auth::user();
+
+        if ($user->profile_pic_public_id) {
+            $this->cloudinary->delete($user->profile_pic_public_id);
+        }
         
         Auth::logout();
         

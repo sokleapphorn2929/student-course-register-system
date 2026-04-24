@@ -18,9 +18,11 @@
                 <h2 class="fw-bold">Teacher Management</h2>
                 <p class="text-muted">Manage student enrollments and course data</p>
             </div>
-            <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                <i class="bi bi-plus-circle me-2"></i> Register New Teacher
-            </button>
+            @if (Auth::user()->role === 'Admin')    
+                <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i class="bi bi-plus-circle me-2"></i> Register New Teacher
+                </button>
+            @endif
         </div>
 
         @include("dashboard.layout.total_section")
@@ -118,78 +120,83 @@
                             <td>{{ $teacher->teacher_dob }}</td>
                             <td>{{ $teacher->hired_date }}</td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $teacher->_id }}"><i class="bi bi-pencil"></i></button>
+                                @if(Auth::user()->role === 'Admin')
 
-                                <div class="modal fade" id="updateCourseModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog text-start">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Update Teacher</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('teacher.update', $teacher->_id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Full Name</label>
-                                                        <input name="teacher_name" type="text" class="form-control" placeholder="Enter student name" value="{{ $teacher->teacher_name }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Phone</label>
-                                                        <input name="teacher_phone" type="text" class="form-control" placeholder="Enter phone number" value="{{ $teacher->teacher_phone }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Address</label>
-                                                        <input name="teacher_address" type="text" class="form-control" placeholder="Enter address" value="{{ $teacher->teacher_address }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Date of Birth</label>
-                                                        <input name="teacher_dob" type="date" class="form-control" value="{{ $teacher->teacher_dob }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Hired Date</label>
-                                                        <input name="hired_date" type="date" class="form-control" value="{{ $teacher->hired_date }}" required>
-                                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $teacher->_id }}"><i class="bi bi-pencil"></i></button>
+
+                                    <div class="modal fade" id="updateCourseModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog text-start">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Teacher</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Trigger -->
-                                <button class="btn btn-sm btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $teacher->_id }}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                                <!-- Modal (inside the loop, unique per row) -->
-                                <div class="modal fade" id="deleteModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Confirm Delete</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete <strong>{{ $teacher->std_name }}</strong>? This action cannot be undone.
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('teacher.delete', $teacher->_id) }}" method="POST">
+                                                <form action="{{ route('teacher.update', $teacher->_id) }}" method="POST">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Full Name</label>
+                                                            <input name="teacher_name" type="text" class="form-control" placeholder="Enter student name" value="{{ $teacher->teacher_name }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Phone</label>
+                                                            <input name="teacher_phone" type="text" class="form-control" placeholder="Enter phone number" value="{{ $teacher->teacher_phone }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Address</label>
+                                                            <input name="teacher_address" type="text" class="form-control" placeholder="Enter address" value="{{ $teacher->teacher_address }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Date of Birth</label>
+                                                            <input name="teacher_dob" type="date" class="form-control" value="{{ $teacher->teacher_dob }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Hired Date</label>
+                                                            <input name="hired_date" type="date" class="form-control" value="{{ $teacher->hired_date }}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+
+                                    <!-- Trigger -->
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ $teacher->_id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                    <!-- Modal (inside the loop, unique per row) -->
+                                    <div class="modal fade" id="deleteModal{{ $teacher->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirm Delete</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete <strong>{{ $teacher->std_name }}</strong>? This action cannot be undone.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="{{ route('teacher.delete', $teacher->_id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-muted small">View only</span>
+                                @endif
                             </td>
                         </tr>
                         @empty

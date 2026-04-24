@@ -122,7 +122,7 @@
                                                     <div class="modal-body">
                                                         <select id="rolechoose" class="form-select" aria-label="Default select example">
                                                             <option selected>Select Role</option>
-                                                            <option id="vAdmin" value="Admin">Admin</option>
+                                                            {{-- <option id="vAdmin" value="Admin">Admin</option> --}}
                                                             <option id="vStudent" value="Student">Student</option>
                                                             <option id="vTeacher" value="Teacher">Teacher</option>
                                                         </select>

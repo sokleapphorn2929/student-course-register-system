@@ -5,9 +5,14 @@
                 <h2 class="fw-bold">Registration Management</h2>
                 <p class="text-muted">Manage student enrollments and course data</p>
             </div>
-            <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+            {{-- <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
                 <i class="bi bi-plus-circle me-2"></i> Register New Student
-            </button>
+            </button> --}}
+            @if(Auth::user()->role !== 'Student')
+                <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i class="bi bi-plus-circle me-2"></i> Register New Student
+                </button>
+            @endif
         </div>
 
         @include("dashboard.layout.total_section")
@@ -106,88 +111,98 @@
                             <td>{{ $student->std_dob }}</td>
                             <td>{{ $student->course->course_title ?? 'N/A' }}</td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $student->_id }}"><i class="bi bi-pencil"></i></button>
+                                {{-- <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $student->_id }}"><i class="bi bi-pencil"></i></button> --}}
+                                @if(Auth::user()->role !== 'Student')
+                                {{-- Edit Button --}}
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-1" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#updateCourseModal{{ $student->_id }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
 
-                                <div class="modal fade" id="updateCourseModal{{ $student->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog text-start">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Update Student</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('student.update', $student->_id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Full Name</label>
-                                                        <input name="std_name" type="text" class="form-control" placeholder="Enter student name" value="{{ $student->std_name }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Phone</label>
-                                                        <input name="std_phone" type="text" class="form-control" placeholder="Enter phone number" value="{{ $student->std_phone }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Address</label>
-                                                        <input name="std_address" type="text" class="form-control" placeholder="Enter address" value="{{ $student->std_address }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Date of Birth</label>
-                                                        <input name="std_dob" type="date" class="form-control" value="{{ $student->std_dob }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Select Course</label>
-                                                        <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
-                                                            <option value="" disabled>Choose...</option>
-                                                            @foreach($courses as $course)
-                                                                <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->_id ? 'selected' : '' }}>
-                                                                    {{ $course->course_title }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('course_id')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
+                                    <div class="modal fade" id="updateCourseModal{{ $student->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog text-start">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Student</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Trigger -->
-                                <button class="btn btn-sm btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $student->_id }}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                                <!-- Modal (inside the loop, unique per row) -->
-                                <div class="modal fade" id="deleteModal{{ $student->_id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Confirm Delete</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete <strong>{{ $student->std_name }}</strong>? This action cannot be undone.
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('student.delete', $student->_id) }}" method="POST">
+                                                <form action="{{ route('student.update', $student->_id) }}" method="POST">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Full Name</label>
+                                                            <input name="std_name" type="text" class="form-control" placeholder="Enter student name" value="{{ $student->std_name }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Phone</label>
+                                                            <input name="std_phone" type="text" class="form-control" placeholder="Enter phone number" value="{{ $student->std_phone }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Address</label>
+                                                            <input name="std_address" type="text" class="form-control" placeholder="Enter address" value="{{ $student->std_address }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Date of Birth</label>
+                                                            <input name="std_dob" type="date" class="form-control" value="{{ $student->std_dob }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Select Course</label>
+                                                            <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach($courses as $course)
+                                                                    <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->_id ? 'selected' : '' }}>
+                                                                        {{ $course->course_title }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                            @error('course_id')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary" id="saveCourseBtn">Save Changes</button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+
+                                    <!-- Trigger -->
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ $student->_id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                    <!-- Modal (inside the loop, unique per row) -->
+                                    <div class="modal fade" id="deleteModal{{ $student->_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirm Delete</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete <strong>{{ $student->std_name }}</strong>? This action cannot be undone.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="{{ route('student.delete', $student->_id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-muted small">View only</span>
+                                @endif
                             </td>
                         </tr>
                         @empty

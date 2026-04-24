@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -9,6 +10,9 @@ use Exception;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        protected CloudinaryService $cloudinary
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -61,24 +65,42 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         try {
-            // Delete old profile picture if exists
-            if ($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)) {
-                Storage::disk("public")->delete($user->profile_pic);
+            // // Delete old profile picture if exists
+            // if ($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)) {
+            //     Storage::disk("public")->delete($user->profile_pic);
+            // }
+    
+            // // Store the file properly
+            // $file = $request->file("profile_picture");
+            // $fileName = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
+            // $path = $file->storeAs('profile-pictures', $fileName, 'public');
+    
+            // // Update user's profile_pic field in database
+            // $user->profile_pic = $path;
+            // $user->save();
+    
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Profile picture updated successfully',
+            //     'path' => asset('storage/' . $path)
+            // ]);
+            if($user->profile_pic_public_id){
+                $this->cloudinary->delete($user->profile_pic_public_id);
             }
-    
-            // Store the file properly
-            $file = $request->file("profile_picture");
-            $fileName = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('profile-pictures', $fileName, 'public');
-    
-            // Update user's profile_pic field in database
-            $user->profile_pic = $path;
+
+            $result = $this->cloudinary->upload(
+                $request->file('profile_picture')->getRealPath(),
+                ['folder' => 'profile-pictures']
+            );
+
+            $user->profile_pic           = $result['secure_url'];
+            $user->profile_pic_public_id = $result['public_id'];
             $user->save();
-    
+
             return response()->json([
                 'success' => true,
                 'message' => 'Profile picture updated successfully',
-                'path' => asset('storage/' . $path)
+                'path'    => $result['secure_url']
             ]);
         } catch(\Exception $e) {
             return response()->json([

@@ -104,8 +104,8 @@
                                     <i class="bi bi-person-badge me-1"></i> Register as
                                 </label>
                                 <select class="form-select form-select-lg rounded-3" id="role" name="role" required>
-                                    <option value="" disabled selected">Select your role</option>
-                                    <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="" disabled selected>Select your role</option>
+                                    {{-- <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Admin</option> --}}
                                     <option value="Student" {{ old('role') == 'Student' ? 'selected' : '' }}>Student</option>
                                     <option value="Teacher" {{ old('role') == 'Teacher' ? 'selected' : '' }}>Teacher</option>
                                 </select>
