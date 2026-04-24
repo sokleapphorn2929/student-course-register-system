@@ -21,6 +21,7 @@ class Users extends Authenticatable
         "email",
         "password",
         "profile_pic",
+        'profile_pic_public_id',
         "role",
         "gender",
         "dob",
