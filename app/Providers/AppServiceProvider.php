@@ -7,6 +7,7 @@ use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
+use App\Services\CloudinaryService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(CloudinaryService::class, fn() => new CloudinaryService());
     }
 
     /**

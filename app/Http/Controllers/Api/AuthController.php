@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Services\CloudinaryService;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected CloudinaryService $cloudinary
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -39,16 +43,30 @@ class AuthController extends Controller
             'dob' => 'nullable|date|before:today'
         ]);
 
-        $profile_pic = null;
-        if($request->hasFile('profile_pic')){
-            $profile_pic = $request->file('profile_pic')->store('profile-pictures', 'public');
+        // $profile_pic = null;
+        // if($request->hasFile('profile_pic')){
+        //     $profile_pic = $request->file('profile_pic')->store('profile-pictures', 'public');
+        // }
+
+        $profile_pic_url       = null;
+        $profile_pic_public_id = null;
+
+        if ($request->hasFile('profile_pic')) {
+            $result = $this->cloudinary->upload(
+                $request->file('profile_pic')->getRealPath(),
+                ['folder' => 'profile-pictures']
+            );
+            $profile_pic_url       = $result['secure_url'];
+            $profile_pic_public_id = $result['public_id'];
         }
 
         $user = Users::create([
             "username"    => $request->username,
             "email"       => $request->email,
             "password"    => Hash::make($request->password),
-            "profile_pic" => $profile_pic,
+            // "profile_pic" => $profile_pic,
+            "profile_pic"           => $profile_pic_url,        // store URL
+            "profile_pic_public_id" => $profile_pic_public_id,
             'role'        => $request->role,
             "gender"      => $request->gender,
             "dob"         => $request->dob
@@ -167,11 +185,32 @@ class AuthController extends Controller
             'dob' => 'sometimes|date|before:today'
         ]);
 
-        if($request->hasFile("profile_pic")){
-            if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
-                Storage::disk("public")->delete($user->profile_pic);
+        // if($request->hasFile("profile_pic")){
+        //     if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
+        //         Storage::disk("public")->delete($user->profile_pic);
+        //     }
+        //     $validated["profile_pic"] = $request->file('profile_pic')->store('profile-pictures', 'public');
+        // }
+
+        if ($request->hasFile('profile_pic')) {
+
+            // Delete old image from Cloudinary
+            if ($user->profile_pic_public_id) {
+                $this->cloudinary->delete($user->profile_pic_public_id);
             }
-            $validated["profile_pic"] = $request->file('profile_pic')->store('profile-pictures', 'public');
+
+            // Upload new image
+            $result = $this->cloudinary->upload(
+                $request->file('profile_pic')->getRealPath(),
+                ['folder' => 'profile-pictures']
+            );
+
+            $validated['profile_pic']           = $result['secure_url'];
+            $validated['profile_pic_public_id'] = $result['public_id'];
+        }
+
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
         }
 
         $user -> update($validated);
@@ -194,8 +233,12 @@ class AuthController extends Controller
             ],404);
         }
 
-        if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
-            Storage::disk("public")->delete($user->profile_pic);
+        // if($user->profile_pic && Storage::disk("public")->exists($user->profile_pic)){
+        //     Storage::disk("public")->delete($user->profile_pic);
+        // }
+
+        if ($user->profile_pic_public_id) {
+            $this->cloudinary->delete($user->profile_pic_public_id);
         }
 
         $user->delete();

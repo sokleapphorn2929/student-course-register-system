@@ -24,10 +24,16 @@
                             <div id="profilePictureContainer">
                                 @if (Auth::user()->profile_pic)
                                     <img id="currentProfilePic" 
-                                        src="{{ asset("storage/" . Auth::user()->profile_pic) }}" 
+                                        {{-- src="{{ asset("storage/" . Auth::user()->profile_pic) }}" 
                                         alt="{{ Auth::user()->username }}" 
                                         class="rounded-circle border border-3 border-white shadow-sm"
-                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                        style="width: 120px; height: 120px; object-fit: cover;" --}}
+
+                                        src="{{ Auth::user()->profile_pic }}" 
+                                        alt="{{ Auth::user()->username }}" 
+                                        class="rounded-circle border border-3 border-white shadow-sm"
+                                        style="width: 120px; height: 120px; object-fit: cover;"
+                                    >
                                 @else
                                     <div id="currentProfilePic" class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" 
                                         style="width: 120px; height: 120px; font-size: 5rem;">

@@ -22,7 +22,7 @@
 
                             @if(Auth::user()->profile_pic)
                                 <img 
-                                    src="{{ asset('storage/' . Auth::user()->profile_pic) }}" 
+                                    src="{{ Auth::user()->profile_pic }}"
                                     alt="{{ Auth::user()->username }}"
                                     class="rounded-circle me-2 object-fit-cover"
                                     style="width: 30px; height: 30px;"

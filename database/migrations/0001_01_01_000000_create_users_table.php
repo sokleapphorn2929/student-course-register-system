@@ -18,6 +18,7 @@ return new class extends Migration
             $collection->string('password');
             $collection->string('profile_pic')->nullable();
             $collection->string('role');
+            $collection->string('profile_pic_public_id')->nullable();
             $collection->string('gender')->nullable();
             $collection->date('dob')->nullable();
             $collection->rememberToken();
