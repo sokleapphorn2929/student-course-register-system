@@ -31,38 +31,17 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Configure MongoDB (override any SQLite settings)
-RUN echo "APP_NAME=StudentCourseRegister" > .env && \
-    echo "APP_ENV=production" >> .env && \
-    echo "APP_DEBUG=false" >> .env && \
-    echo "APP_URL=https://student-course-register-system.onrender.com" >> .env && \
-    echo "" >> .env && \
-    echo "# Database Configuration" >> .env && \
-    echo "DB_CONNECTION=mongodb" >> .env && \
-    echo "DB_HOST=mongodb" >> .env && \
-    echo "DB_PORT=27017" >> .env && \
-    echo "DB_DATABASE=student_course_db" >> .env && \
-    echo "DB_USERNAME=" >> .env && \
-    echo "DB_PASSWORD=" >> .env && \
-    echo "" >> .env && \
-    echo "# Session & Cache" >> .env && \
-    echo "SESSION_DRIVER=file" >> .env && \
-    echo "CACHE_DRIVER=file" >> .env && \
-    echo "BROADCAST_DRIVER=log" >> .env
-
 # Install dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-interaction
+    --no-interaction \
+    --no-scripts
 
-# Generate key and optimize
-RUN php artisan key:generate --force && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Generate application key (required for Laravel)
+RUN php artisan key:generate --force
 
-# Set permissions
+# Set permissions (DO NOT cache config here - let Render handle it)
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 storage bootstrap/cache
 

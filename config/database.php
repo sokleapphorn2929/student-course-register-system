@@ -134,7 +134,10 @@ return [
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'options' => [
-                'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+                // 'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+                'appname' => env('APP_NAME', 'Laravel'),
+                'retryWrites' => true,
+                'w' => 'majority',
             ]
         ],
     ],
