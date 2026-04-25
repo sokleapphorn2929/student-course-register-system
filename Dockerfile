@@ -14,9 +14,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install MongoDB extension via PECL (works with PHP 8.4)
-RUN pecl install mongodb && \
-    docker-php-ext-enable mongodb
+# Install MongoDB extension via PECL
+RUN pecl install mongodb && docker-php-ext-enable mongodb
 
 # Install Composer
 COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
@@ -26,7 +25,7 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Create .env file with CORRECT configuration for MongoDB Atlas
+# Create .env file with ALL configurations
 RUN echo "APP_NAME=StudentCourseRegister" > .env && \
     echo "APP_ENV=production" >> .env && \
     echo "APP_DEBUG=true" >> .env && \
@@ -36,6 +35,11 @@ RUN echo "APP_NAME=StudentCourseRegister" > .env && \
     echo "DB_CONNECTION=mongodb" >> .env && \
     echo "DB_URI=mongodb+srv://sokleap111:LVj7iwcyCNxyDE2z@cluster0.64ynazr.mongodb.net/student-course?retryWrites=true&w=majority&appName=Cluster0" >> .env && \
     echo "DB_DATABASE=student-course" >> .env && \
+    echo "" >> .env && \
+    echo "# Cloudinary Configuration" >> .env && \
+    echo "CLOUDINARY_CLOUD_NAME=ds1e6ptad" >> .env && \
+    echo "CLOUDINARY_API_KEY=816719455348913" >> .env && \
+    echo "CLOUDINARY_API_SECRET=UKpRJvNflHLzH0bLXBTr05aTK38" >> .env && \
     echo "" >> .env && \
     echo "# Session & Cache" >> .env && \
     echo "SESSION_DRIVER=file" >> .env && \
@@ -49,7 +53,7 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --optimize-autoloader \
     --no-interaction
 
-# Generate key only (don't cache config during build)
+# Generate key
 RUN php artisan key:generate --force
 
 # Set permissions
