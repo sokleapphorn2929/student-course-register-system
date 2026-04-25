@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 use App\Services\CloudinaryService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,10 +27,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // View::share('courses', Courses::all());
-        if (Schema::hasTable('courses')) {
-            View::share('courses', Courses::all());
-        } else {
-            View::share('courses', collect([])); // Empty collection as fallback
+        try {
+            $courses = Courses::all();
+            View::share('courses', $courses);
+        } catch (\Exception $e) {
+            // Log the error but don't crash
+            Log::warning('Failed to load courses for view share: ' . $e->getMessage());
+            View::share('courses', collect([]));
         }
         
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
