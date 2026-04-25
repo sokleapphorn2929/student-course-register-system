@@ -20,7 +20,6 @@ RUN apt-get install -y gnupg \
     && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list \
     && apt-get update \
     && apt-get install -y php-mongodb \
-    || pecl install mongodb \
     && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
 
 # Install Composer
@@ -34,7 +33,7 @@ COPY . .
 # Create .env file with CORRECT configuration for MongoDB Atlas
 RUN echo "APP_NAME=StudentCourseRegister" > .env && \
     echo "APP_ENV=production" >> .env && \
-    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_DEBUG=true" >> .env && \
     echo "APP_URL=https://student-course-register-system.onrender.com" >> .env && \
     echo "" >> .env && \
     echo "# Database Configuration" >> .env && \
@@ -54,11 +53,8 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --optimize-autoloader \
     --no-interaction
 
-# Generate key and optimize
-RUN php artisan key:generate --force && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Generate key only (don't cache config during build)
+RUN php artisan key:generate --force
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
