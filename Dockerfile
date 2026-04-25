@@ -1,4 +1,4 @@
-FROM php:8.5-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -28,17 +28,19 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock ./
+# Copy all application files
+COPY . .
 
+# Install dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction
 
-COPY . .
-
+# Set up environment and generate key
 RUN cp .env.example .env && php artisan key:generate
 
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
