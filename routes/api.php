@@ -73,29 +73,3 @@ Route::prefix("enrollment")->middleware("auth:sanctum")->group(function(){
     Route::get("/",[EnrollmentAPIController::class,"index"]);
     Route::get("/{id}",[EnrollmentAPIController::class,"show"]);
 });
-
-Route::get('/db-status', function() {
-    try {
-        // Test MongoDB connection
-        $db = DB::connection('mongodb');
-        $collections = $db->listCollections();
-        
-        // Try to count users
-        $userCount = \App\Models\Users::count();
-        
-        return response()->json([
-            'status' => 'connected',
-            'database' => config('database.default'),
-            'collections' => iterator_to_array($collections),
-            'user_count' => $userCount,
-            'db_uri' => env('DB_URI') ? 'set' : 'not set'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'file' => basename($e->getFile()),
-            'line' => $e->getLine()
-        ], 500);
-    }
-});
