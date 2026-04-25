@@ -14,13 +14,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install MongoDB extension
-RUN apt-get install -y gnupg \
-    && curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg \
-    && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list \
-    && apt-get update \
-    && apt-get install -y php-mongodb \
-    && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
+# Install MongoDB extension via PECL (works with PHP 8.4)
+RUN pecl install mongodb && \
+    docker-php-ext-enable mongodb
 
 # Install Composer
 COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
