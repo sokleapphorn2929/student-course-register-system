@@ -24,7 +24,7 @@ RUN apt-get install -y gnupg \
     && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
 
 # Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
