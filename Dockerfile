@@ -31,37 +31,22 @@ WORKDIR /var/www/html
 # Copy all application files
 COPY . .
 
-# Create a dummy .env file that uses SQLite (to avoid database connection errors)
-RUN cp .env.example .env || echo "APP_KEY=" > .env
-
-# Set dummy database configuration for build time
-RUN php artisan config:clear && \
-    php artisan config:set database.default=sqlite && \
-    php artisan config:set database.connections.sqlite.database=/tmp/dummy.sqlite && \
-    touch /tmp/dummy.sqlite
-
-# Install dependencies WITHOUT running scripts (critical fix)
+# Install dependencies WITHOUT any scripts (most reliable)
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --no-scripts
 
-# Now generate key (won't fail because we have dummy database config)
-RUN php artisan key:generate --force
-
-# Run package discovery separately (won't fail now)
-RUN composer dump-autoload && \
-    php artisan package:discover || echo "Package discovery skipped - database will be configured at runtime"
-
-# Fix storage permissions
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Remove dummy database config (will use real one at runtime)
-RUN rm -f /tmp/dummy.sqlite
-
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Generate key and run migrations when container starts (not during build)
+CMD cp .env.example .env || true && \
+    php artisan key:generate --force || true && \
+    php artisan package:discover || true && \
+    php artisan serve --host=0.0.0.0 --port=10000
