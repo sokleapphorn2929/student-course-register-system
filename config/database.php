@@ -130,7 +130,7 @@ return [
             'dsn' => env('DB_URI', 'mongodb://127.0.0.1:27017'), // DSN = Data Source Name
             'database' => env('DB_DATABASE', 'student-course'), // Use full connection string for Atlas
             'port' => env('DB_PORT', 27017),
-            'database' => env('DB_DATABASE'),
+            // 'database' => env('DB_DATABASE'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'options' => [
