@@ -39,7 +39,7 @@ RUN echo "APP_NAME=StudentCourseRegister" > .env && \
     echo "" >> .env && \
     echo "# Database Configuration" >> .env && \
     echo "DB_CONNECTION=mongodb" >> .env && \
-    echo "DB_URI=mongodb+srv://sokleap111:LVj7iwcyCNxyDE2z@cluster0.64ynazr.mongodb.net/student-course?retryWrites=true&w=majority" >> .env && \
+    echo "DB_URI=mongodb+srv://sokleap111:LVj7iwcyCNxyDE2z@cluster0.64ynazr.mongodb.net/student-course?retryWrites=true&w=majority&appName=Cluster0" >> .env && \
     echo "DB_DATABASE=student-course" >> .env && \
     echo "" >> .env && \
     echo "# Session & Cache" >> .env && \
