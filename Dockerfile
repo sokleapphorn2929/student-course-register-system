@@ -31,10 +31,24 @@ WORKDIR /var/www/html
 # Copy all application files
 COPY . .
 
-# Create .env file from example if it doesn't exist
-RUN if [ ! -f .env ]; then cp .env.example .env; fi
+# Create .env file with MongoDB configuration (OVERWRITE any existing)
+RUN echo "APP_NAME=StudentCourseRegister" > .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_URL=http://student-course-register-system.onrender.com" >> .env && \
+    echo "" >> .env && \
+    echo "DB_CONNECTION=mongodb" >> .env && \
+    echo "DB_HOST=mongodb" >> .env && \
+    echo "DB_PORT=27017" >> .env && \
+    echo "DB_DATABASE=student_course_db" >> .env && \
+    echo "DB_USERNAME=" >> .env && \
+    echo "DB_PASSWORD=" >> .env && \
+    echo "" >> .env && \
+    echo "SESSION_DRIVER=file" >> .env && \
+    echo "CACHE_DRIVER=file" >> .env && \
+    echo "BROADCAST_DRIVER=log" >> .env
 
-# Install dependencies WITHOUT any scripts
+# Install dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
@@ -43,6 +57,10 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
 
 # Generate application key
 RUN php artisan key:generate --force
+
+# Clear and cache config
+RUN php artisan config:clear && \
+    php artisan config:cache
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
