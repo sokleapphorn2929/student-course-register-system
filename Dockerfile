@@ -31,16 +31,20 @@ WORKDIR /var/www/html
 # Copy all application files
 COPY . .
 
-# Install dependencies
+# Install dependencies WITHOUT running scripts
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-interaction
+    --no-interaction \
+    --no-scripts
 
-# Set up environment and generate key
+# Now run the scripts manually, but skip database-dependent ones
+RUN composer run-script post-autoload-dump || true
+
+# Set up environment and generate key (creates .env file)
 RUN cp .env.example .env && php artisan key:generate
 
-# Set permissions
+# Fix storage permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
