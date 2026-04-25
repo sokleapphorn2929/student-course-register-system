@@ -23,13 +23,16 @@ RUN apt-get install -y gnupg \
     || pecl install mongodb \
     && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
 
-# ⭐ IMPORTANT: Install Composer (THIS LINE WAS MISSING)
+# Install Composer
 COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
 # Copy all application files
 COPY . .
+
+# Create .env file from example if it doesn't exist
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
 # Install dependencies WITHOUT any scripts
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
@@ -48,5 +51,4 @@ RUN chown -R www-data:www-data /var/www/html \
 
 EXPOSE 10000
 
-# Serve the application
 CMD php artisan serve --host=0.0.0.0 --port=10000
