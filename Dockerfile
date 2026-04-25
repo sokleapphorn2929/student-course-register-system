@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install MongoDB extension ^2.2 (required by mongodb/mongodb 2.2.0)
+# Install MongoDB extension
 RUN pecl install mongodb-2.2.0 \
     && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
 
@@ -24,29 +24,27 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first (layer caching)
+# Copy composer files first
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
+# Install PHP dependencies — verbose so we can see the real error
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-scripts \
-    --no-interaction
+    --no-interaction \
+    --verbose
 
 # Copy the rest of the project
 COPY . .
 
-# Run post-install scripts
-RUN composer run-script post-autoload-dump
+# Copy env and generate key
+RUN cp .env.example .env && php artisan key:generate
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Expose port for Render
 EXPOSE 10000
 
-# Start Laravel server
 CMD php artisan serve --host=0.0.0.0 --port=10000
