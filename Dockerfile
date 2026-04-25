@@ -31,7 +31,7 @@ WORKDIR /var/www/html
 # Copy all application files
 COPY . .
 
-# Install dependencies WITHOUT any scripts (most reliable)
+# Install dependencies WITHOUT any scripts
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
@@ -45,8 +45,10 @@ RUN chown -R www-data:www-data /var/www/html \
 
 EXPOSE 10000
 
-# Generate key and run migrations when container starts (not during build)
-CMD cp .env.example .env || true && \
-    php artisan key:generate --force || true && \
-    php artisan package:discover || true && \
+# Check if .env exists, if not copy .env.example, then generate key and start
+CMD if [ ! -f .env ]; then \
+        cp .env.example .env; \
+    fi && \
+    php artisan key:generate --force && \
+    php artisan package:discover && \
     php artisan serve --host=0.0.0.0 --port=10000
