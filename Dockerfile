@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install MongoDB extension with SSL/TLS support
-RUN pecl install mongodb \
+# Install MongoDB extension ^2.2 (required by mongodb/mongodb 2.2.0)
+RUN pecl install mongodb-2.2.0 \
     && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
 
 # Install Composer
@@ -24,11 +24,15 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first (better layer caching)
+# Copy composer files first (layer caching)
 COPY composer.json composer.lock ./
 
 # Install PHP dependencies
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-scripts \
+    --no-interaction
 
 # Copy the rest of the project
 COPY . .
