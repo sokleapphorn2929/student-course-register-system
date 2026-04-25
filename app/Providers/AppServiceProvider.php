@@ -10,6 +10,7 @@ use Laravel\Sanctum\Sanctum;
 use App\Services\CloudinaryService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
         }
         
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        if (env('APP_ENV') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }
