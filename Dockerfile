@@ -28,6 +28,7 @@ COPY . .
 # Create .env file with ALL configurations
 RUN echo "APP_NAME=StudentCourseRegister" > .env && \
     echo "APP_ENV=production" >> .env && \
+    echo "APP_KEY=base64:JcyJ8oeAunm5nW99mRkZMO0WL1EXj48gRaEG05txA6c=" >> .env && \
     echo "APP_DEBUG=true" >> .env && \
     echo "APP_URL=https://student-course-register-system.onrender.com" >> .env && \
     echo "" >> .env && \
