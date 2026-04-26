@@ -59,7 +59,6 @@ Route::middleware(["auth:sanctum", "Admin"])->group(function() {
 Route::middleware(["auth:sanctum", "Teacher"])->group(function() {
     Route::prefix("student")->group(function() {
         Route::get("/", [StudentAPIController::class, "index"]);
-        Route::post("/", [StudentAPIController::class, "store"]);
         Route::get("/{id}", [StudentAPIController::class, "show"]);
         Route::put("/{id}", [StudentAPIController::class, "update"]);
         Route::delete("/{id}", [StudentAPIController::class, "destroy"]);
