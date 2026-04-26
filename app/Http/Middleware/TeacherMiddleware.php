@@ -15,11 +15,15 @@ class TeacherMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()?->role || $request->user()->role !== 'Teacher') {
-        return response()->json([
-                'message' => 'Teacher permission only'
-            ], 403);
+        $user = $request->user();
+        
+        // Allow access if user is Teacher OR Admin
+        if ($user && ($user->role === 'Teacher' || $user->role === 'Admin')) {
+            return $next($request);
         }
-        return $next($request);
+        
+        return response()->json([
+            'message' => 'Teacher permission only'
+        ], 403);
     }
 }
