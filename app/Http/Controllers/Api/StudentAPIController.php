@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Enrollments;
 use App\Models\Students;
 use Illuminate\Http\Request;
 
@@ -108,6 +109,8 @@ class StudentAPIController extends Controller
                 'data' => null
             ], 404);
         }
+
+        $student->enrollments()->delete();
 
         $student->delete();
 

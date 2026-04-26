@@ -156,16 +156,12 @@
                                                         <div class="mb-3">
                                                             <label class="form-label">Select Course</label>
                                                             <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
-                                                                @if ($courses->count() > 0)    
-                                                                    <option value="" disabled {{ old('course_id') ? '' : 'selected' }}>Choose...</option>
-                                                                    @foreach($courses as $course)
-                                                                        <option value="{{ $course->_id }}" {{ old('course_id') == $course->_id ? 'selected' : '' }}>
-                                                                            {{ $course->course_title }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                @else
-                                                                    <option value="" disabled selected>No courses available - Please add courses first</option>
-                                                                @endif
+                                                                <option value="" disabled>Choose...</option>
+                                                                @foreach($courses as $course)
+                                                                    <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->_id ? 'selected' : '' }}>
+                                                                        {{ $course->course_title }}
+                                                                    </option>
+                                                                @endforeach
                                                             </select>
                                                             @error('course_id')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
