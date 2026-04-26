@@ -109,7 +109,13 @@
                         @endif
                             <td>{{ $student->std_address }}</td>
                             <td>{{ $student->std_dob }}</td>
-                            <td>{{ $student->course->course_title ?? 'N/A' }}</td>
+
+                            @if($student->course && $student->course->course_title)
+                                <td>{{ $student->course->course_title }}</td>
+                            @else
+                                <td><span class="text-danger">N/A</span></td>
+                            @endif
+
                             <td class="text-center">
                                 {{-- <button type="button" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#updateCourseModal{{ $student->_id }}"><i class="bi bi-pencil"></i></button> --}}
                                 @if(Auth::user()->role !== 'Student')
@@ -150,12 +156,16 @@
                                                         <div class="mb-3">
                                                             <label class="form-label">Select Course</label>
                                                             <select class="form-select @error('course_id') is-invalid @enderror" name="course_id" required>
-                                                                <option value="" disabled>Choose...</option>
-                                                                @foreach($courses as $course)
-                                                                    <option value="{{ $course->id }}" {{ old('course_id', $student->course_id) == $course->_id ? 'selected' : '' }}>
-                                                                        {{ $course->course_title }}
-                                                                    </option>
-                                                                @endforeach
+                                                                @if ($courses->count() > 0)    
+                                                                    <option value="" disabled {{ old('course_id') ? '' : 'selected' }}>Choose...</option>
+                                                                    @foreach($courses as $course)
+                                                                        <option value="{{ $course->_id }}" {{ old('course_id') == $course->_id ? 'selected' : '' }}>
+                                                                            {{ $course->course_title }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                @else
+                                                                    <option value="" disabled selected>No courses available - Please add courses first</option>
+                                                                @endif
                                                             </select>
                                                             @error('course_id')
                                                                 <div class="invalid-feedback">{{ $message }}</div>

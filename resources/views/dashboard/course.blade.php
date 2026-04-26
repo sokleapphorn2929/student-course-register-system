@@ -87,7 +87,13 @@
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
                             <td>{{ $course->course_title }}</td>
-                            <td>{{ $course->teachers->teacher_name ?? 'N/A' }}</td>
+
+                            @if($course->teachers && $course->teachers->teacher_name)
+                                <td>{{ $course->teachers->teacher_name }}</td>
+                            @else
+                                <td><span class="text-danger">N/A</span></td>
+                            @endif
+
                             @if ($course->course_description)
                             <td style="max-width: 100px;" class="text-truncate" title="{{ $course->course_description }}"
                                 role="button"

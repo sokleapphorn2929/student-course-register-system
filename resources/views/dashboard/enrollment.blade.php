@@ -91,7 +91,12 @@
                             
                             <td>{{ $enrollment->student->std_name ?? 'N/A'}}</td>
 
-                            <td>{{ $enrollment->course->course_title }}</td>
+                            @if($enrollment->course && $enrollment->course->course_title)
+                                <td>{{ $enrollment->course->course_title }}</td>
+                            @else
+                                <td><span class="text-danger">N/A</span></td>
+                            @endif
+                            
                             <td>
                                 @php
                                     $statusColor = [
