@@ -88,7 +88,9 @@
                         @forelse ($enrollments as $index => $enrollment)
                         <tr>
                             <td class="text-danger fw-bold">{{ $index+1 }}</td>
-                            <td>{{ $enrollment->student->std_name }}</td>
+                            
+                            <td>{{ $enrollment->student->std_name ?? 'N/A'}}</td>
+
                             <td>{{ $enrollment->course->course_title }}</td>
                             <td>
                                 @php

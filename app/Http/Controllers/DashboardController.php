@@ -137,7 +137,11 @@ class DashboardController extends Controller
      */
     public function destroy(string $id)
     {
-        Students::findOrFail($id)->delete();
+        $student = Students::findOrFail($id);
+
+        $student->enrollments()->delete();
+
+        $student->delete();
         
         return redirect()->route('student.submit')->with('success', 'Student deleted successfully!');
     }
