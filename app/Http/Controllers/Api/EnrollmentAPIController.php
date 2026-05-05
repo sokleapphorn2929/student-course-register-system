@@ -49,7 +49,7 @@ class EnrollmentAPIController extends Controller
      */
     public function show(string $id)
     {
-        $enrollment = Enrollments::find($id);
+        $enrollment = Enrollments::findOrFail($id);
 
         if (!$enrollment) {
             return response()->json([
@@ -69,7 +69,7 @@ class EnrollmentAPIController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $enrollment = Enrollments::find($id);
+        $enrollment = Enrollments::findOrFail($id);
 
         if (!$enrollment) {
             return response()->json([
@@ -100,7 +100,7 @@ class EnrollmentAPIController extends Controller
      */
     public function destroy(string $id)
     {
-        $enrollment = Enrollments::find($id);
+        $enrollment = Enrollments::findOrFail($id);
 
         if (!$enrollment) {
             return response()->json([
